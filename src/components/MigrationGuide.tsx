@@ -87,14 +87,14 @@ export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
           </div>
 
           <div className="overflow-x-auto bg-slate-50 dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <table className="w-full text-left border-collapse">
+            <table className="w-full min-w-[600px] text-left border-collapse">
               <thead>
                 <tr className="border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  <th className="py-3 px-4">Prefix</th>
-                  <th className="py-3 px-4">Region</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Prefix</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Region</th>
                   <th className="py-3 px-4">Major Postal Hubs</th>
-                  <th className="py-3 px-4 text-right">Range</th>
-                  <th className="py-3 px-4 text-right">Offices</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Range</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Offices</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800/80 text-sm bg-white dark:bg-[#0B0F17]">
@@ -103,19 +103,19 @@ export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
                     key={region.id}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                   >
-                    <td className="py-2.5 px-4 font-mono font-semibold text-[#EA580C] dark:text-[#FB923C]">
+                    <td className="py-2.5 px-4 font-mono font-semibold text-[#EA580C] dark:text-[#FB923C] whitespace-nowrap">
                       {region.prefixRange}
                     </td>
-                    <td className="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
+                    <td className="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
                       {region.name}
                     </td>
                     <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400">
                       {region.majorHubs}
                     </td>
-                    <td className="py-2.5 px-4 text-right font-mono text-xs text-slate-600 dark:text-slate-400">
+                    <td className="py-2.5 px-4 text-right font-mono text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
                       {region.minCode}–{region.maxCode}
                     </td>
-                    <td className="py-2.5 px-4 text-right font-mono font-semibold text-slate-900 dark:text-slate-100">
+                    <td className="py-2.5 px-4 text-right font-mono font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
                       {region.count}
                     </td>
                   </tr>

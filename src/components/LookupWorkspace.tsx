@@ -243,7 +243,7 @@ export function LookupWorkspace({
                 </p>
               </div>
 
-              <div className="flex items-center gap-3 shrink-0">
+              <div className="flex flex-wrap items-center gap-3 shrink-0">
                 <div className="px-5 py-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-center">
                   <span className="block text-xs text-slate-500 dark:text-slate-400">Postal Code</span>
                   <span className="font-mono text-3xl font-extrabold text-[#EA580C] dark:text-[#FB923C]">
@@ -267,6 +267,14 @@ export function LookupWorkspace({
                     </>
                   )}
                 </button>
+                <button
+                  type="button"
+                  onClick={() => onSelectForApi?.(activeEntry)}
+                  className="h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  Test in API
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
               </div>
             </div>
 
@@ -283,7 +291,7 @@ export function LookupWorkspace({
                       e.preventDefault();
                       onSelectSlug(rel.slug);
                     }}
-                    className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-colors whitespace-nowrap"
+                    className="min-h-[38px] sm:min-h-0 px-2.5 py-1.5 sm:py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-colors whitespace-nowrap inline-flex items-center"
                   >
                     {rel.location} ({rel.code})
                   </a>
@@ -313,7 +321,7 @@ export function LookupWorkspace({
             </div>
 
             <div className="hidden lg:flex lg:col-span-4 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex-col justify-between">
-              <div className="bg-white px-6 py-4 flex items-center justify-center border-b border-slate-100 dark:border-slate-800">
+              <div className="flex-1 bg-white px-6 py-4 flex items-center justify-center border-b border-slate-100 dark:border-slate-800">
                 <img
                   src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
                   alt="Kenya Postal Codes official directory logo"
@@ -373,7 +381,7 @@ export function LookupWorkspace({
                   if (query.trim().length > 0) setShowSuggestions(true);
                 }}
                 onKeyDown={handleInputKeyDown}
-                placeholder="Search location, region, or 5-digit code (e.g. Nairobi GPO, 00100)"
+                placeholder="Search town, region, or code (e.g. 00100)"
                 aria-label="Search Kenyan location or postal code"
                 aria-autocomplete="list"
                 aria-expanded={showSuggestions && suggestions.length > 0}
@@ -673,13 +681,13 @@ export function LookupWorkspace({
             </div>
           ) : (
             <div className="mt-5 overflow-x-auto border border-slate-200 dark:border-slate-800 rounded-xl">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full min-w-[520px] text-left border-collapse">
                 <thead>
                   <tr className="bg-slate-50 dark:bg-[#0B0F17] border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
                     <th className="py-2.5 px-4">Location / Post Office</th>
                     <th className="py-2.5 px-4">Region</th>
-                    <th className="py-2.5 px-4 text-right">Postal Code</th>
-                    <th className="py-2.5 px-4 text-right">Action</th>
+                    <th className="py-2.5 px-4 text-right whitespace-nowrap">Postal Code</th>
+                    <th className="py-2.5 px-4 text-right whitespace-nowrap">Action</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800/80 text-sm">
@@ -703,17 +711,17 @@ export function LookupWorkspace({
                             {entry.location}
                           </a>
                         </td>
-                        <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400">
+                        <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
                           {entry.regionName}
                         </td>
-                        <td className="py-2.5 px-4 text-right font-mono font-bold text-[#EA580C] dark:text-[#FB923C]">
+                        <td className="py-2.5 px-4 text-right font-mono font-bold text-[#EA580C] dark:text-[#FB923C] whitespace-nowrap">
                           {entry.code}
                         </td>
-                        <td className="py-2.5 px-4 text-right">
+                        <td className="py-2.5 px-4 text-right whitespace-nowrap">
                           <button
                             type="button"
                             onClick={() => handleCopySingle(entry)}
-                            className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer ${
+                            className={`inline-flex items-center justify-center gap-1 min-h-[36px] sm:min-h-0 px-3 py-1.5 sm:px-2.5 sm:py-1 rounded-md text-xs font-medium border transition-colors cursor-pointer ${
                               isCopied
                                 ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
                                 : 'bg-white dark:bg-[#111827] border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
@@ -731,18 +739,18 @@ export function LookupWorkspace({
           )}
 
           {searchResult.total > visibleEntries.length && (
-            <div className="mt-6 flex items-center justify-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
               <button
                 type="button"
                 onClick={() => setDisplayLimit((prev) => prev + 60)}
-                className="px-5 py-2.5 text-sm font-semibold text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors cursor-pointer"
+                className="min-h-[44px] px-5 py-2.5 text-sm font-semibold text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-xl transition-colors cursor-pointer"
               >
                 Load More ({searchResult.total - visibleEntries.length} remaining)
               </button>
               <button
                 type="button"
                 onClick={() => setDisplayLimit(searchResult.total)}
-                className="px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
+                className="min-h-[44px] px-4 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors cursor-pointer"
               >
                 Show All
               </button>

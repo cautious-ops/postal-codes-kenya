@@ -1,10 +1,41 @@
 import { BookOpen, Code2, Search, Terminal } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 type MobileTab = 'lookup' | 'api' | 'embed' | 'directory';
 
+const SECTION_TAB_MAP: Array<{ id: string; tab: MobileTab }> = [
+  { id: 'lookup', tab: 'lookup' },
+  { id: 'api-explorer', tab: 'api' },
+  { id: 'embed-widget', tab: 'embed' },
+  { id: 'migration', tab: 'directory' },
+];
+
 export function MobileBottomNav() {
   const [activeTab, setActiveTab] = useState<MobileTab>('lookup');
+
+  useEffect(() => {
+    if (typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            const match = SECTION_TAB_MAP.find((item) => item.id === entry.target.id);
+            if (match) {
+              setActiveTab(match.tab);
+            }
+          }
+        }
+      },
+      { rootMargin: '-35% 0px -55% 0px', threshold: 0 }
+    );
+
+    for (const item of SECTION_TAB_MAP) {
+      const el = document.getElementById(item.id);
+      if (el) observer.observe(el);
+    }
+
+    return () => observer.disconnect();
+  }, []);
 
   function navigate(tab: MobileTab, targetId: string) {
     setActiveTab(tab);

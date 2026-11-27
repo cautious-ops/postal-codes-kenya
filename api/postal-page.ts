@@ -10,9 +10,22 @@ interface VercelResponse extends ServerResponse {
   send: (body: string) => void;
 }
 
-export default function handler(req: VercelRequest, res: VercelResponse) {
+function extractSlug(req: VercelRequest): string {
   const slugParam = req.query?.slug;
-  const slug = Array.isArray(slugParam) ? slugParam[0] : slugParam ?? '';
+  if (slugParam !== undefined) {
+    return Array.isArray(slugParam) ? slugParam[0] : slugParam;
+  }
+  if (req.url) {
+    const parsed = new URL(req.url, 'http://localhost');
+    const qSlug = parsed.searchParams.get('slug');
+    if (qSlug) return qSlug;
+    return parsed.pathname.split('/').filter(Boolean).pop() ?? '';
+  }
+  return '';
+}
+
+export default function handler(req: VercelRequest, res: VercelResponse) {
+  const slug = extractSlug(req);
   const baseUrl = resolveRequestBaseUrl(req.headers);
 
   const { status, html } = buildSeoHtmlPage(slug, baseUrl);

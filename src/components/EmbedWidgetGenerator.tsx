@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Check, Code2, Copy, Download, Search } from 'lucide-react';
+import { Check, Code2, Copy, Download, Search, X } from 'lucide-react';
 import { queryPostalCodes } from '../../shared/postalService.ts';
 
 type SnippetMode = 'wordpress' | 'standalone';
@@ -86,6 +86,7 @@ export function EmbedWidgetGenerator() {
     box.innerHTML='<p class="kpc-empty">Searching...</p>';
     try{
       var res = await fetch(API + "?limit=6&q=" + encodeURIComponent(q));
+      if(!res.ok) throw new Error("HTTP " + res.status);
       var data = await res.json();
       render(data.results || [], q);
     }catch(e){
@@ -295,12 +296,22 @@ ${wordpressSnippet}
                   onChange={(e) => setPreviewQuery(e.target.value)}
                   placeholder="Try Nairobi, 00100, Nakuru..."
                   aria-label="Preview widget search"
-                  className={`w-full h-11 sm:h-10 pl-9 pr-3 rounded-lg text-base sm:text-sm border focus:border-[#F38020] focus:outline-none ${
+                  className={`w-full h-11 sm:h-10 pl-9 pr-10 rounded-lg text-base sm:text-sm border focus:border-[#F38020] focus:outline-none ${
                     widgetTheme === 'dark'
                       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500'
                       : 'bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400'
                   }`}
                 />
+                {previewQuery && (
+                  <button
+                    type="button"
+                    onClick={() => setPreviewQuery('')}
+                    aria-label="Clear preview search"
+                    className="absolute right-1 top-1/2 -translate-y-1/2 w-9 h-9 flex items-center justify-center rounded-md text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                )}
               </div>
 
               <div className="space-y-2">
@@ -339,7 +350,7 @@ ${wordpressSnippet}
                         <button
                           type="button"
                           onClick={() => void handlePreviewCopy(row.code)}
-                          className={`min-h-[36px] sm:min-h-0 px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer ${
+                          className={`min-h-[40px] sm:min-h-0 px-3 sm:px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer ${
                             widgetTheme === 'dark'
                               ? 'bg-slate-900 border-slate-700 text-slate-200'
                               : 'bg-white border-slate-200 text-slate-700'

@@ -21,8 +21,14 @@ export default function handler(req: IncomingMessage, res: VercelResponse) {
     return;
   }
 
-  res.status(200).json({
-    totalRecords: POSTAL_ENTRIES.length,
-    regions: getRegionsSummary(),
-  });
+  try {
+    res.status(200).json({
+      totalRecords: POSTAL_ENTRIES.length,
+      regions: getRegionsSummary(),
+    });
+  } catch (err) {
+    res.status(500).json({
+      error: err instanceof Error ? err.message : 'Internal server error',
+    });
+  }
 }

@@ -77,6 +77,14 @@ async function createServer() {
     const region = typeof req.query.region === 'string' ? req.query.region.slice(0, 10) : undefined;
     const format = typeof req.query.format === 'string' ? req.query.format.toLowerCase() : 'json';
     const rawLimit = typeof req.query.limit === 'string' ? req.query.limit : undefined;
+
+    if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+      res.status(400).json({
+        error: 'Invalid region parameter. Expected a single digit 0-9 or "all".',
+      });
+      return;
+    }
+
     const limit = rawLimit === 'all'
       ? POSTAL_ENTRIES.length
       : rawLimit
@@ -87,6 +95,9 @@ async function createServer() {
 
     if (format === 'csv') {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      if (req.query.download === '1') {
+        res.setHeader('Content-Disposition', 'attachment; filename="kenya-postal-codes.csv"');
+      }
       res.send(entriesToCsv(payload.results));
       return;
     }
@@ -126,7 +137,9 @@ async function createServer() {
     if (format === 'csv') {
       const csv = entriesToCsv(payload.results);
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-      res.setHeader('Content-Disposition', 'attachment; filename="kenya-postal-codes.csv"');
+      if (req.query.download === '1') {
+        res.setHeader('Content-Disposition', 'attachment; filename="kenya-postal-codes.csv"');
+      }
       res.send(csv);
       return;
     }
