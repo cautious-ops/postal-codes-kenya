@@ -140,6 +140,7 @@ export function LookupWorkspace({
     setSelectedRegion('all');
     setShowSuggestions(false);
     setActiveSuggestionIdx(-1);
+    onSelectSlug(entry.slug);
   }
 
   function handleInputKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -340,7 +341,10 @@ export function LookupWorkspace({
 
         {activeEntry ? (
           <>
-            <div className="mb-5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+            <div
+              id="postal-detail"
+              className="scroll-mt-4 md:scroll-mt-20 mb-5 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs"
+            >
               <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
                 <button
                   type="button"
@@ -658,14 +662,17 @@ export function LookupWorkspace({
                       </div>
 
                       <div className="flex items-end justify-between gap-3 pt-1">
-                        <button
-                          type="button"
-                          onClick={() => onSelectForApi?.(entry)}
+                        <a
+                          href={`/postal-code/${entry.slug}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onSelectSlug(entry.slug);
+                          }}
                           className="font-mono text-2xl font-bold tracking-tight text-[#EA580C] dark:text-[#FB923C] hover:text-[#C2410C] dark:hover:text-[#FDBA74] transition-colors cursor-pointer text-left"
-                          title="Test this code in the API Explorer"
+                          title={`View details for ${entry.location} (${entry.code})`}
                         >
                           {entry.code}
-                        </button>
+                        </a>
 
                         <button
                           type="button"
@@ -732,7 +739,17 @@ export function LookupWorkspace({
                           {entry.regionName}
                         </td>
                         <td className="py-2.5 px-4 text-right font-mono font-bold text-[#EA580C] dark:text-[#FB923C] whitespace-nowrap">
-                          {entry.code}
+                          <a
+                            href={`/postal-code/${entry.slug}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              onSelectSlug(entry.slug);
+                            }}
+                            className="hover:text-[#C2410C] dark:hover:text-[#FDBA74] hover:underline transition-colors"
+                            title={`View details for ${entry.location} (${entry.code})`}
+                          >
+                            {entry.code}
+                          </a>
                         </td>
                         <td className="py-2.5 px-4 text-right whitespace-nowrap">
                           <button

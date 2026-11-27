@@ -85,7 +85,6 @@ export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
                 onClick={(e) => {
                   e.preventDefault();
                   onSelectSlug(item.slug);
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 className="p-3.5 bg-slate-50 dark:bg-[#111827] hover:bg-white dark:hover:bg-[#151D2E] border border-slate-200 dark:border-slate-800 rounded-xl transition-colors block"
               >

@@ -144,6 +144,16 @@ export default function App() {
   function handleSelectSlug(slug: string | null) {
     if (slug) {
       pushPath(`/postal-code/${slug}`, { kind: 'postal', slug });
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          const detailEl = document.getElementById('postal-detail') ?? document.getElementById('lookup');
+          if (detailEl) {
+            detailEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      });
     } else {
       pushPath('/', { kind: 'home' });
     }
@@ -204,7 +214,7 @@ export default function App() {
             />
             <AdSlot placement="lookup-api-break" variant="leaderboard" />
             <ApiPlayground externalCodeQuery={apiSelectedCode} />
-            <EmbedWidgetGenerator />
+            <EmbedWidgetGenerator onSelectSlug={handleSelectSlug} />
             <AdSlot placement="embed-directory-break" variant="compact" />
             <MigrationGuide onSelectSlug={handleSelectSlug} />
             <AdSlot placement="footer-multiplex" variant="multiplex" />

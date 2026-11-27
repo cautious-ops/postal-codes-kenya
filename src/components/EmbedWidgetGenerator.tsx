@@ -5,7 +5,11 @@ import { queryPostalCodes } from '../../shared/postalService.ts';
 type SnippetMode = 'wordpress' | 'standalone';
 type WidgetTheme = 'light' | 'dark';
 
-export function EmbedWidgetGenerator() {
+interface EmbedWidgetGeneratorProps {
+  onSelectSlug?: (slug: string) => void;
+}
+
+export function EmbedWidgetGenerator({ onSelectSlug }: EmbedWidgetGeneratorProps) {
   const defaultOrigin =
     typeof window !== 'undefined' ? window.location.origin : 'https://your-app.vercel.app';
 
@@ -334,7 +338,18 @@ ${wordpressSnippet}
                       }`}
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-bold truncate">{row.location}</p>
+                        <a
+                          href={`/postal-code/${row.slug}`}
+                          onClick={(e) => {
+                            if (onSelectSlug) {
+                              e.preventDefault();
+                              onSelectSlug(row.slug);
+                            }
+                          }}
+                          className="block text-sm font-bold truncate hover:text-[#EA580C] dark:hover:text-[#FB923C] transition-colors"
+                        >
+                          {row.location}
+                        </a>
                         <p
                           className={`text-xs truncate ${
                             widgetTheme === 'dark' ? 'text-slate-400' : 'text-slate-500'
@@ -344,9 +359,19 @@ ${wordpressSnippet}
                         </p>
                       </div>
                       <div className="flex items-center gap-2.5 shrink-0">
-                        <span className="font-mono text-base font-bold text-[#F38020]">
+                        <a
+                          href={`/postal-code/${row.slug}`}
+                          onClick={(e) => {
+                            if (onSelectSlug) {
+                              e.preventDefault();
+                              onSelectSlug(row.slug);
+                            }
+                          }}
+                          className="font-mono text-base font-bold text-[#F38020] hover:underline"
+                          title={`View details for ${row.location} (${row.code})`}
+                        >
                           {row.code}
-                        </span>
+                        </a>
                         <button
                           type="button"
                           onClick={() => void handlePreviewCopy(row.code)}
