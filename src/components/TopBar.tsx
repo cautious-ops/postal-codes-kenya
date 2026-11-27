@@ -15,10 +15,16 @@ export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
               onNavigateHome();
             }
           }}
-          className="font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F38020] rounded-sm"
+          className="inline-flex items-center gap-2.5 font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F38020] rounded-sm"
           style={{ fontFamily: 'var(--font-display)' }}
         >
-          Kenya Postal Directory
+          <img
+            src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
+            alt="Kenya Postal Codes logo"
+            referrerPolicy="no-referrer"
+            className="w-9 h-9 rounded-lg object-contain bg-white p-0.5 border border-slate-200 dark:border-slate-700 shrink-0"
+          />
+          <span>Kenya Postal Directory</span>
         </a>
 
         <nav

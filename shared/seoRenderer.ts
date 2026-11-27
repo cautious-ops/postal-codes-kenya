@@ -148,10 +148,12 @@ function renderHtmlShell(params: {
   <title>${escapeHtml(title)}</title>
   <meta name="description" content="${escapeHtml(description)}" />
   <meta name="robots" content="index, follow" />
+  <link rel="icon" type="image/png" href="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png" />
   <link rel="canonical" href="${escapeHtml(canonicalUrl)}" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${escapeHtml(title)}" />
   <meta property="og:description" content="${escapeHtml(description)}" />
+  <meta property="og:image" content="${escapeHtml(baseUrl)}/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png" />
   <meta property="og:url" content="${escapeHtml(canonicalUrl)}" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="${escapeHtml(title)}" />
