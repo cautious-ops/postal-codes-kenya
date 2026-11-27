@@ -1,10 +1,11 @@
-import { BookOpen, Code2, Search, Terminal } from 'lucide-react';
+import { BookOpen, Code2, Mail, Search, Terminal } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-type MobileTab = 'lookup' | 'api' | 'embed' | 'directory';
+type MobileTab = 'lookup' | 'address' | 'api' | 'embed' | 'directory';
 
 const SECTION_TAB_MAP: Array<{ id: string; tab: MobileTab }> = [
   { id: 'lookup', tab: 'lookup' },
+  { id: 'letter-address', tab: 'address' },
   { id: 'api-explorer', tab: 'api' },
   { id: 'embed-widget', tab: 'embed' },
   { id: 'migration', tab: 'directory' },
@@ -47,7 +48,7 @@ export function MobileBottomNav() {
       aria-label="Mobile navigation"
       className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-[#0B0F17]/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 pb-[env(safe-area-inset-bottom)]"
     >
-      <div className="grid grid-cols-4 h-14">
+      <div className="grid grid-cols-5 h-14">
         <button
           type="button"
           onClick={() => navigate('lookup', 'lookup')}
@@ -58,7 +59,20 @@ export function MobileBottomNav() {
           }`}
         >
           <Search className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none">Lookup</span>
+          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Lookup</span>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate('address', 'letter-address')}
+          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+            activeTab === 'address'
+              ? 'text-[#EA580C] dark:text-[#FB923C]'
+              : 'text-slate-500 dark:text-slate-400'
+          }`}
+        >
+          <Mail className="w-5 h-5" />
+          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Address</span>
         </button>
 
         <button
@@ -71,7 +85,7 @@ export function MobileBottomNav() {
           }`}
         >
           <Terminal className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none">Free API</span>
+          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Free API</span>
         </button>
 
         <button
@@ -84,7 +98,7 @@ export function MobileBottomNav() {
           }`}
         >
           <Code2 className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none">WP / HTML</span>
+          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">WP / HTML</span>
         </button>
 
         <button
@@ -97,7 +111,7 @@ export function MobileBottomNav() {
           }`}
         >
           <BookOpen className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none">Regions</span>
+          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Regions</span>
         </button>
       </div>
     </nav>

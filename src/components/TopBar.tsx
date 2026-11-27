@@ -38,6 +38,12 @@ export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
             Lookup
           </a>
           <a
+            href="#letter-address"
+            className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+          >
+            Letter Format
+          </a>
+          <a
             href="#api-explorer"
             className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >

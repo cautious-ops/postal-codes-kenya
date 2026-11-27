@@ -7,6 +7,7 @@ import {
   Download,
   LayoutGrid,
   List,
+  Mail,
   Moon,
   Search,
   Sun,
@@ -393,6 +394,16 @@ export function LookupWorkspace({
                         Copy Code
                       </>
                     )}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      document.getElementById('letter-address')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }}
+                    className="h-12 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-sm font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer whitespace-nowrap"
+                  >
+                    <Mail className="w-4 h-4 text-[#EA580C] dark:text-[#FB923C]" />
+                    Format Address
                   </button>
                   <button
                     type="button"

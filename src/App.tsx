@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TopBar } from './components/TopBar.tsx';
 import { LookupWorkspace } from './components/LookupWorkspace.tsx';
+import { AddressFormatter } from './components/AddressFormatter.tsx';
 import { ApiPlayground } from './components/ApiPlayground.tsx';
 import { EmbedWidgetGenerator } from './components/EmbedWidgetGenerator.tsx';
 import { MigrationGuide } from './components/MigrationGuide.tsx';
@@ -45,6 +46,7 @@ export default function App() {
   const [route, setRoute] = useState<AppRoute>(getRouteFromPathname);
 
   const activeSlug = route.kind === 'postal' ? route.slug : null;
+  const activeEntry = activeSlug ? findEntryBySlugOrCode(activeSlug) ?? null : null;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -212,6 +214,7 @@ export default function App() {
               onSelectSlug={handleSelectSlug}
               onSelectForApi={handleSelectForApi}
             />
+            <AddressFormatter activeEntry={activeEntry} />
             <AdSlot placement="lookup-api-break" variant="leaderboard" />
             <ApiPlayground externalCodeQuery={apiSelectedCode} />
             <EmbedWidgetGenerator onSelectSlug={handleSelectSlug} />
