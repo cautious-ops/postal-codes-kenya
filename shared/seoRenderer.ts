@@ -157,6 +157,7 @@ function renderHtmlShell(params: {
   <meta name="twitter:title" content="${escapeHtml(title)}" />
   <meta name="twitter:description" content="${escapeHtml(description)}" />
   <script type="application/ld+json">${jsonLd}</script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4696915371021515" crossorigin="anonymous"></script>
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; max-width: 760px; margin: 40px auto; padding: 0 20px; color: #0f172a; background: #f8fafc; line-height: 1.6; }
     .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 14px; padding: 28px; }
