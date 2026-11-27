@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Kenya Postal Code Finder | Accurate Postal Code Lookup Tool</title>
+    <meta name="description"
+        content="Fast and reliable postal code finder. Search by location or postal code in Kenya. Instant results, copy codes, and smart suggestions.">
+    <meta name="keywords"
+        content="postal code finder, zip code lookup, postal code search, find postal code, location to postal code, kenya postal code, kenya code">
+    <meta name="author" content="Kenya Postal Code Finder">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://postalcodes.mwashcyber.co.ke/">
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="Kenya Postal Code Finder | Accurate Lookup Tool">
+    <meta property="og:description"
+        content="Search for postal codes by location name or code. Fast, clean, and easy to use. Perfect for businesses and everyday use.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://postalcodes.mwashcyber.co.ke/">
+    <meta property="og:image" content="https://yourdomain.com/og-postal-finder.jpg">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Postal Code Finder">
+    <meta name="twitter:description" content="Instant Kenya postal code lookup with smart suggestions.">
+    <!-- Schema.org markup for WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Postal Code Finder",
+      "description": "Search postal codes by location name or code. Load your own CSV data and get instant results.",
+      "applicationCategory": "Utility",
+      "operatingSystem": "All",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KES"
+      },
+      "featureList": "Location search, postal code lookup, one-click copy, smart suggestions, CSV support",
+      "url": "https://postalcodes.mwashcyber.co.ke/"
+    }
+    </script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: #faf9f8;
+            min-height: 100vh;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* main card */
+        .finder-card {
+            max-width: 1100px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 1.8rem;
+            box-shadow: 0 20px 35px -12px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.03);
+            overflow: hidden;
+            transition: all 0.2s ease;
+        }
+
+        /* ORANGE THEME - Cloudflare orange (no text branding) */
+        .hero {
+            background: #f38020;
+            background: linear-gradient(135deg, #f38020 0%, #e06e10 100%);
+            padding: 2rem 2rem 1.8rem;
+            color: white;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-weight: 800;
+            font-size: 2rem;
+            letter-spacing: -0.3px;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .hero h1 span {
+            background: rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(2px);
+            padding: 0.2rem 1rem;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .hero p {
+            opacity: 0.92;
+            font-size: 0.95rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* search panel */
+        .search-panel {
+            padding: 2rem 2rem 1.2rem;
+            background: white;
+            border-bottom: 1px solid #f0f0ef;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-wrapper {
+            flex: 4;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-wrapper input {
+            width: 100%;
+            padding: 15px 22px;
+            font-size: 1rem;
+            border: 2px solid #e6e5e4;
+            border-radius: 60px;
+            background: #ffffff;
+            transition: all 0.2s ease;
+            font-weight: 500;
+            color: #1e1f1f;
+            outline: none;
+        }
+
+        .search-wrapper input:focus {
+            border-color: #f38020;
+            box-shadow: 0 0 0 3px rgba(243, 128, 32, 0.2);
+        }
+
+        /* suggestions dropdown */
+        .suggestions-list {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 1.25rem;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            list-style: none;
+            padding: 6px 0;
+            margin: 0;
+            border: 1px solid #efeeec;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px);
+            transition: all 0.2s ease;
+        }
+
+        .suggestions-list.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .suggestions-list li {
+            padding: 14px 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #f3f2f0;
+        }
+
+        .suggestions-list li:last-child {
+            border-bottom: none;
+        }
+
+        .suggestions-list li:hover {
+            background: #fff4e8;
+        }
+
+        .suggestion-location {
+            font-weight: 700;
+            color: #2f2e2d;
+            font-size: 0.95rem;
+        }
+
+        .suggestion-code {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.8rem;
+            background: #fff0e3;
+            padding: 5px 14px;
+            border-radius: 40px;
+            color: #e06e10;
+            font-weight: 700;
+        }
+
+        /* Buttons - Orange theme */
+        button {
+            background: #f38020;
+            border: none;
+            padding: 0 32px;
+            height: 56px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-radius: 60px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button:hover {
+            background: #e06e10;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -8px rgba(0, 0, 0, 0.15);
+        }
+
+        .clear-btn {
+            background: #f4f3f1;
+            color: #5b5b5a;
+            box-shadow: none;
+            border: 1px solid #e2e0dd;
+        }
+
+        .clear-btn:hover {
+            background: #eae8e5;
+            color: #2f2e2d;
+        }
+
+        /* stats bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            padding: 0 6px;
+            font-size: 0.8rem;
+            color: #7a6e5d;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .badge {
+            background: #fff4e8;
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #e06e10;
+        }
+
+        /* results area - LARGE PROMINENT FORMATS */
+        .result-area {
+            padding: 1.8rem 2rem 2rem;
+            background: #fefefe;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .result-count {
+            background: #fff4e8;
+            padding: 6px 20px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #e06e10;
+        }
+
+        .copy-all-info {
+            font-size: 0.8rem;
+            background: #f4f3f1;
+            border: none;
+            padding: 8px 20px;
+            height: auto;
+            color: #f38020;
+            font-weight: 700;
+            border-radius: 40px;
+            box-shadow: none;
+        }
+
+        .copy-all-info:hover {
+            background: #eae8e5;
+            color: #d3630e;
+        }
+
+        #result {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* RESULT CARD - BIG NUMBERS, BIG LOCATIONS */
+        .result-card {
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.5rem 1.8rem;
+            border: 1px solid #efedeb;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .result-card:hover {
+            border-color: #fadbc2;
+            box-shadow: 0 8px 18px -8px rgba(0, 0, 0, 0.08);
+        }
+
+        .result-info {
+            flex: 3;
+        }
+
+        /* LOCATION NAME - LARGE & BOLD */
+        .result-location {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: #2b2a29;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            letter-spacing: -0.3px;
+        }
+
+        .location-icon {
+            font-size: 1.7rem;
+        }
+
+        /* POSTAL CODE - EXTRA LARGE, BOLD, ORANGE HIGHLIGHT */
+        .result-postal {
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            background: #fff4e8;
+            display: inline-flex;
+            align-items: baseline;
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #e06e10;
+            letter-spacing: 1px;
+            gap: 10px;
+        }
+
+        .result-postal span {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .copy-btn {
+            background: #faf8f7;
+            border: 1.5px solid #e6e2dd;
+            border-radius: 60px;
+            padding: 12px 26px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #f38020;
+            cursor: pointer;
+            transition: 0.1s;
+            height: auto;
+            box-shadow: none;
+            min-width: 140px;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            background: #fff4e8;
+            border-color: #f38020;
+            transform: scale(0.97);
+        }
+
+        .no-result {
+            background: #fff9f2;
+            border-left: 6px solid #f38020;
+            padding: 1.5rem;
+            border-radius: 1.2rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1rem;
+            color: #aa5f1a;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(243, 128, 32, 0.25);
+            border-radius: 50%;
+            border-top-color: #f38020;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .error-message {
+            background: #fff2ee;
+            border-left: 6px solid #f38020;
+            padding: 1.2rem;
+            border-radius: 1rem;
+            color: #c25c10;
+            font-weight: 600;
+        }
+
+        .status-message {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        /* SEO content */
+        .seo-content {
+            max-width: 1100px;
+            margin-top: 2rem;
+            background: white;
+            border-radius: 1.5rem;
+            padding: 1.8rem 2rem;
+            color: #3a3a38;
+            line-height: 1.5;
+            font-size: 0.9rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f0eeeb;
+        }
+
+        .seo-content h2 {
+            font-size: 1.4rem;
+            margin-bottom: 0.75rem;
+            color: #e06e10;
+            font-weight: 700;
+        }
+
+        .seo-content p {
+            margin-bottom: 1rem;
+        }
+
+        .seo-content ul {
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .seo-content li {
+            margin: 0.4rem 0;
+        }
+
+        hr {
+            margin: 1rem 0;
+            border: 0;
+            height: 1px;
+            background: #efece8;
+        }
+
+        /* Mobile: keep numbers large, just scale down slightly */
+        @media (max-width: 640px) {
+            body {
+                padding: 0.75rem;
+            }
+
+            .hero h1 {
+                font-size: 1.6rem;
+            }
+
+            .search-panel,
+            .result-area,
+            .hero,
+            .seo-content {
+                padding-left: 1.2rem;
+                padding-right: 1.2rem;
+            }
+
+            .result-card {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 1.2rem;
+            }
+
+            .result-location {
+                font-size: 1.3rem;
+            }
+
+            .result-postal {
+                font-size: 1.4rem;
+                padding: 8px 18px;
+            }
+
+            .copy-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            button {
+                padding: 0 20px;
+                height: 52px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .input-group {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-wrapper {
+                width: 100%;
+            }
+            .result-location {
+                font-size: 1.2rem;
+            }
+            .result-postal {
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="finder-card">
+        <div class="hero">
+            <h1>
+                📮 Kenya Postal Code Finder
+                <span>fast & accurate</span>
+            </h1>
+            <p>Search by location name or postal code — results appear instantly.</p>
+        </div>
+
+        <div class="search-panel">
+            <form id="mainSearchForm">
+                <div class="input-group">
+                    <div class="search-wrapper">
+                        <input type="text" id="searchInput" placeholder="Loading data..." autocomplete="off" required aria-label="Search location or postal code">
+                        <ul id="suggestionsDropdown" class="suggestions-list" role="listbox"></ul>
+                    </div>
+                    <button type="submit" aria-label="Search">🔍 Search</button>
+                    <button type="button" id="clearBtn" class="clear-btn" aria-label="Clear input">✖ Clear</button>
+                </div>
+            </form>
+            <div class="stats-bar">
+                <div class="status-message" id="loadStatus">
+                    <span class="loader"></span> Loading postal database...
+                </div>
+                <div class="badge" id="recordCountBadge">— records</div>
+            </div>
+        </div>
+
+        <div class="result-area">
+            <div class="result-header">
+                <span class="result-count" id="resultCountSpan">📋 Results</span>
+                <button id="copyAllBtn" class="copy-all-info" aria-label="Copy all results">📋 Copy all results</button>
+            </div>
+            <div id="result">
+                <div style="text-align:center; color:#a68a6e; padding:24px; font-size:1rem;">✨ Type a location or postal code above — postal codes appear large & bold</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="seo-content">
+        <h2>Why Use Our Postal Code Finder?</h2>
+        <p>Whether you need a <strong>postal code lookup</strong> for shipping, address validation, or geographic analysis, this tool provides instant results using your own curated data. </p>
+        <ul>
+            <li>✅ Fast, client‑side search – no delays, no server calls.</li>
+            <li>✅ Smart suggestions as you type – reduces errors.</li>
+            <li>✅ One‑click copy for each postal code or bulk copy all results.</li>
+            <li>✅ Works entirely offline after CSV is loaded.</li>
+            <li>✅ Clean, responsive design – works on mobile and desktop.</li>
+        </ul>
+        <p>Ideal for businesses, couriers, e‑commerce platforms, and anyone who needs accurate postal code information.</p>
+        <hr>
+    </div>
+
+    <script>
+        // ----------------------------------------------
+        // CORE DATA - ONLY FROM CSV (NO DEMO DATA)
+        // ----------------------------------------------
+        let postalData = [];
+        let isDataLoaded = false;
+
+        async function loadCSV() {
+            const statusDiv = document.getElementById('loadStatus');
+            const recordBadge = document.getElementById('recordCountBadge');
+            const searchInput = document.getElementById('searchInput');
+            try {
+                const response = await fetch('postal-codes.csv');
+                if (!response.ok) throw new Error(`HTTP ${response.status}: CSV not found or inaccessible`);
+                const text = await response.text();
+                const lines = text.trim().split('\n').slice(1);
+                postalData = lines.map(line => {
+                    const [location, postalCode] = line.split(',');
+                    return {
+                        location: (location || "").trim().toLowerCase(),
+                        postalCode: (postalCode || "").trim().toLowerCase()
+                    };
+                }).filter(item => item.location && item.postalCode);
+
+                if (postalData.length === 0) throw new Error("CSV has no valid data rows.");
+
+                isDataLoaded = true;
+                statusDiv.innerHTML = '✅ Database ready';
+                recordBadge.innerText = `📦 ${postalData.length} entries`;
+                setRandomPlaceholder();
+
+            } catch (err) {
+                console.error("CSV load error:", err);
+                isDataLoaded = false;
+                statusDiv.innerHTML = `❌ Error: ${err.message}. Please ensure 'postal-codes.csv' exists`;
+                recordBadge.innerText = `⚠️ failed`;
+                document.getElementById('result').innerHTML = `<div class="error-message">⚠️ Could not load postal data. Make sure <strong>postal-codes.csv</strong> is in the same folder with format: location,postalCode</div>`;
+                document.getElementById('resultCountSpan').innerHTML = `📋 Error`;
+                searchInput.placeholder = "CSV missing — check console";
+            }
+        }
+
+        function setRandomPlaceholder() {
+            const searchInput = document.getElementById('searchInput');
+            if (!isDataLoaded || postalData.length === 0) {
+                searchInput.placeholder = "e.g., Nairobi, 00100";
+                return;
+            }
+            const randomIndex = Math.floor(Math.random() * postalData.length);
+            const randomItem = postalData[randomIndex];
+            const showLocation = Math.random() > 0.5;
+            let placeholderText = "";
+            if (showLocation) {
+                placeholderText = capitalizeStr(randomItem.location);
+            } else {
+                placeholderText = randomItem.postalCode.toUpperCase();
+            }
+            searchInput.placeholder = `e.g., ${placeholderText}`;
+        }
+
+        function capitalizeStr(str) {
+            if (!str) return '';
+            return str.replace(/\b\w/g, char => char.toUpperCase());
+        }
+
+        function searchData(event) {
+            if (event) event.preventDefault();
+            if (!isDataLoaded) {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<div class="no-result">⏳ Data is still loading. Please wait.</div>`;
+                return;
+            }
+
+            const input = document.getElementById('searchInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('result');
+
+            const matches = postalData.filter(item =>
+                item.location.includes(input) || item.postalCode.includes(input)
+            );
+
+            function capitalize(str) {
+                return str.replace(/\b\w/g, char => char.toUpperCase());
+            }
+
+            if (matches.length > 0) {
+                const resultsHTML = matches.map(match => {
+                    const displayLocation = capitalize(match.location);
+                    const displayPostal = match.postalCode.toUpperCase();
+                    return `
+                    <div class="result-card" data-location="${match.location}" data-code="${match.postalCode}">
+                        <div class="result-info">
+                            <div class="result-location">
+                                <span class="location-icon">📍</span> 
+                                <span class="location-name">${escapeHtml(displayLocation)}</span>
+                            </div>
+                            <div class="result-postal">
+                                <span>✉️</span> ${escapeHtml(displayPostal)}
+                            </div>
+                        </div>
+                        <button class="copy-btn" data-copy="${escapeHtml(displayPostal)}">📋 Copy Code</button>
+                    </div>
+                `;
+                }).join('');
+                resultDiv.innerHTML = resultsHTML;
+                document.querySelectorAll('.copy-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const codeToCopy = btn.getAttribute('data-copy');
+                        copyToClipboard(codeToCopy, btn);
+                    });
+                });
+                document.getElementById('resultCountSpan').innerHTML = `🔎 ${matches.length} result${matches.length !== 1 ? 's' : ''}`;
+            } else {
+                resultDiv.innerHTML = `<div class="no-result">❌ No matches found for "<strong>${escapeHtml(input)}</strong>"</div>`;
+                document.getElementById('resultCountSpan').innerHTML = `📋 0 results`;
+            }
+        }
+
+        function copyToClipboard(text, buttonElement) {
+            if (!text) return;
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = buttonElement.innerText;
+                buttonElement.innerText = '✓ Copied!';
+                setTimeout(() => {
+                    buttonElement.innerText = originalText;
+                }, 1500);
+            }).catch(() => {
+                alert('Unable to copy. Please select manually.');
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        let suggestionTimeout = null;
+        const searchInputElem = document.getElementById('searchInput');
+        const suggestionsBox = document.getElementById('suggestionsDropdown');
+
+        function updateSuggestions() {
+            if (!isDataLoaded || !postalData.length) return;
+            const query = searchInputElem.value.trim().toLowerCase();
+            if (query.length === 0) {
+                suggestionsBox.classList.remove('show');
+                return;
+            }
+            const suggestionMatches = [];
+            const addedSet = new Set();
+            for (let item of postalData) {
+                if (item.location.includes(query) || item.postalCode.includes(query)) {
+                    const key = `${item.location}|${item.postalCode}`;
+                    if (!addedSet.has(key)) {
+                        addedSet.add(key);
+                        suggestionMatches.push(item);
+                    }
+                    if (suggestionMatches.length >= 8) break;
+                }
+            }
+            if (suggestionMatches.length === 0) {
+                suggestionsBox.classList.remove('show');
+                return;
+            }
+            suggestionsBox.innerHTML = suggestionMatches.map(match => {
+                const displayLoc = capitalizeStr(match.location);
+                return `<li data-location="${match.location}" data-code="${match.postalCode}" role="option">
+                        <span class="suggestion-location">📍 ${escapeHtml(displayLoc)}</span>
+                        <span class="suggestion-code">${escapeHtml(match.postalCode.toUpperCase())}</span>
+                    </li>`;
+            }).join('');
+            suggestionsBox.classList.add('show');
+
+            document.querySelectorAll('#suggestionsDropdown li').forEach(li => {
+                li.addEventListener('click', (e) => {
+                    const locationVal = li.getAttribute('data-location');
+                    const codeVal = li.getAttribute('data-code');
+                    if (locationVal) {
+                        searchInputElem.value = capitalizeStr(locationVal);
+                    } else if (codeVal) {
+                        searchInputElem.value = codeVal.toUpperCase();
+                    }
+                    suggestionsBox.classList.remove('show');
+                    if (searchInputElem.value.trim() !== '') {
+                        searchData(new Event('submit'));
+                    }
+                });
+            });
+        }
+
+        function handleInputSuggestions() {
+            if (suggestionTimeout) clearTimeout(suggestionTimeout);
+            suggestionTimeout = setTimeout(() => {
+                updateSuggestions();
+            }, 150);
+        }
+
+        function closeSuggestionsOnOutside(e) {
+            if (!searchInputElem.contains(e.target) && !suggestionsBox.contains(e.target)) {
+                suggestionsBox.classList.remove('show');
+            }
+        }
+
+        function initSuggestions() {
+            searchInputElem.addEventListener('input', handleInputSuggestions);
+            document.addEventListener('click', closeSuggestionsOnOutside);
+        }
+
+        function setupClearButton() {
+            const clearBtn = document.getElementById('clearBtn');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    searchInputElem.value = '';
+                    document.getElementById('result').innerHTML = '<div style="text-align:center; color:#a68a6e; padding:24px; font-size:1rem;">✨ Enter a location or postal code — large codes appear here</div>';
+                    document.getElementById('resultCountSpan').innerHTML = '📋 Results';
+                    suggestionsBox.classList.remove('show');
+                });
+            }
+        }
+
+        function setupCopyAll() {
+            const copyAllBtn = document.getElementById('copyAllBtn');
+            if (copyAllBtn) {
+                copyAllBtn.addEventListener('click', () => {
+                    const resultCards = document.querySelectorAll('#result .result-card');
+                    if (!resultCards.length) {
+                        alert('No results to copy.');
+                        return;
+                    }
+                    let copyText = '';
+                    resultCards.forEach(card => {
+                        const locationSpan = card.querySelector('.location-name');
+                        const postalSpan = card.querySelector('.result-postal');
+                        let location = locationSpan ? locationSpan.innerText : '';
+                        let postalRaw = postalSpan ? postalSpan.innerText.replace('✉️', '').trim() : '';
+                        copyText += `${location} : ${postalRaw}\n`;
+                    });
+                    navigator.clipboard.writeText(copyText).then(() => {
+                        const originalText = copyAllBtn.innerText;
+                        copyAllBtn.innerText = '✓ Copied!';
+                        setTimeout(() => {
+                            copyAllBtn.innerText = originalText;
+                        }, 1800);
+                    }).catch(() => alert('Could not copy all results.'));
+                });
+            }
+        }
+
+        (function init() {
+            loadCSV().then(() => {
+                initSuggestions();
+                setupClearButton();
+                setupCopyAll();
+            }).catch(() => {
+                initSuggestions();
+                setupClearButton();
+                setupCopyAll();
+            });
+
+            const form = document.getElementById('mainSearchForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    searchData(e);
+                    suggestionsBox.classList.remove('show');
+                });
+            }
+        })();
+
+        window.searchData = searchData;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Kenya Postal Code Directory & Free API",
+  "description": "Fast Kenya postal code lookup tool, regional directory, and free public REST API built on 647 official Kenyan postal offices.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

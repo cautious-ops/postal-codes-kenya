@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kenya Postal Code Directory &amp; Free API</title>
+    <meta
+      name="description"
+      content="Fast Kenya postal code lookup tool, regional directory, and free public REST API built on 647 official Kenyan postal offices."
+    />
+    <meta
+      name="keywords"
+      content="kenya postal code, postal code finder, kenya zip code, kenya postal api, kenya postcodes json csv"
+    />
+    <meta name="robots" content="index, follow" />
+    <meta property="og:title" content="Kenya Postal Code Directory & Free API" />
+    <meta
+      property="og:description"
+      content="Search 647 Kenyan postal codes by town or 5-digit code, filter by region, and integrate the free public REST API."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kenya Postal Code Directory & Free API" />
+    <meta
+      name="twitter:description"
+      content="Instant Kenya postal code lookup and free open JSON/CSV API."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600;700&family=Plus+Jakarta+Sans:wght@600;700;800&family=Public+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Kenya Postal Code Directory & Free API",
+        "description": "Search Kenyan postal codes by location name or 5-digit postal code with a free public JSON and CSV API.",
+        "applicationCategory": "Utility",
+        "operatingSystem": "All",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "KES"
+        }
+      }
+    </script>
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('kpd-theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          if (saved === 'dark' || (!saved && prefersDark)) {
+            document.documentElement.classList.add('dark');
+          }
+        } catch (e) {}
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
