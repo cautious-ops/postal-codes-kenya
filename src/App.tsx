@@ -73,9 +73,27 @@ export default function App() {
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', description);
 
+    const origin = window.location.origin;
     const canonicalUrl = entry
-      ? `${window.location.origin}/postal-code/${entry.slug}`
-      : `${window.location.origin}/`;
+      ? `${origin}/postal-code/${entry.slug}`
+      : `${origin}/`;
+    const absoluteLogoUrl = `${origin}/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png`;
+
+    const ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) {
+      ogUrl.setAttribute('content', canonicalUrl);
+    } else {
+      const meta = document.createElement('meta');
+      meta.setAttribute('property', 'og:url');
+      meta.setAttribute('content', canonicalUrl);
+      document.head.appendChild(meta);
+    }
+
+    const ogImage = document.querySelector('meta[property="og:image"]');
+    if (ogImage) ogImage.setAttribute('content', absoluteLogoUrl);
+
+    const twitterImage = document.querySelector('meta[name="twitter:image"]');
+    if (twitterImage) twitterImage.setAttribute('content', absoluteLogoUrl);
 
     let canonicalLink = document.querySelector('link[rel="canonical"]');
     if (!canonicalLink) {

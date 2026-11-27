@@ -8,7 +8,12 @@ import {
   lookupByExactCode,
   queryPostalCodes,
 } from './shared/postalService.ts';
-import { buildSeoHtmlPage, buildSitemapXml } from './shared/seoRenderer.ts';
+import {
+  buildRobotsTxt,
+  buildSeoHtmlPage,
+  buildSitemapXml,
+  resolveRequestBaseUrl,
+} from './shared/seoRenderer.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,12 +25,7 @@ const BOT_USER_AGENT_RE =
   /(googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|slackbot|discordbot)/i;
 
 function getRequestBaseUrl(req: express.Request): string {
-  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/+$/, '');
-  const protoHeader = req.headers['x-forwarded-proto'];
-  const proto = Array.isArray(protoHeader) ? protoHeader[0] : protoHeader ?? req.protocol ?? 'http';
-  const hostHeader = req.headers['x-forwarded-host'] ?? req.headers.host;
-  const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader ?? `localhost:${PORT}`;
-  return `${proto}://${host}`;
+  return resolveRequestBaseUrl(req.headers, req.protocol || 'http');
 }
 
 async function createServer() {
@@ -42,15 +42,21 @@ async function createServer() {
     next();
   });
 
+  app.get('/robots.txt', (req, res) => {
+    res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+    res.send(buildRobotsTxt(getRequestBaseUrl(req)));
+  });
+
   app.get('/sitemap.xml', (req, res) => {
     const xml = buildSitemapXml(getRequestBaseUrl(req));
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.send(xml);
   });
 
-  app.get('/api/health', (_req, res) => {
+  app.get('/api/health', (req, res) => {
     res.json({
       status: 'ok',
+      baseUrl: getRequestBaseUrl(req),
       records: POSTAL_ENTRIES.length,
       regions: 10,
       version: '1.0.0',

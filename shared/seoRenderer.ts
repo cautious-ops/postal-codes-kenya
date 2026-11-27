@@ -5,6 +5,39 @@ import {
   type PostalEntry,
 } from './postalService.ts';
 
+function firstHeaderValue(value: string | string[] | undefined): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (!raw) return undefined;
+  return raw.split(',')[0]?.trim() || undefined;
+}
+
+export function resolveRequestBaseUrl(
+  headers: Record<string, string | string[] | undefined>,
+  fallbackProtocol = 'https'
+): string {
+  const host = firstHeaderValue(headers['x-forwarded-host']) ?? firstHeaderValue(headers.host);
+  if (host) {
+    const isLocal = /^(localhost|127\.0\.0\.1|0\.0\.0\.0)(:\d+)?$/i.test(host);
+    const proto =
+      firstHeaderValue(headers['x-forwarded-proto']) ?? (isLocal ? 'http' : fallbackProtocol);
+    return `${proto}://${host}`.replace(/\/+$/, '');
+  }
+
+  const envUrl =
+    process.env.APP_URL ||
+    (process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : undefined) ||
+    (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : undefined);
+
+  return (envUrl ?? 'http://localhost:3000').replace(/\/+$/, '');
+}
+
+export function buildRobotsTxt(baseUrl: string): string {
+  const cleanBase = baseUrl.replace(/\/+$/, '');
+  return `User-agent: *\nAllow: /\n\nSitemap: ${cleanBase}/sitemap.xml\n`;
+}
+
 function escapeXml(value: string): string {
   return value
     .replace(/&/g, '&amp;')

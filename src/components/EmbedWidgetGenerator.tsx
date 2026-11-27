@@ -182,22 +182,33 @@ ${wordpressSnippet}
           <div className="lg:col-span-5 min-w-0 space-y-4">
             <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
               <div>
-                <label
-                  htmlFor="embed-base-url"
-                  className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1.5"
-                >
-                  Vercel API Base URL
-                </label>
+                <div className="flex items-center justify-between gap-2 mb-1.5">
+                  <label
+                    htmlFor="embed-base-url"
+                    className="block text-xs font-semibold text-slate-600 dark:text-slate-400"
+                  >
+                    API Base URL (Auto-detected)
+                  </label>
+                  {apiBaseUrl !== defaultOrigin && (
+                    <button
+                      type="button"
+                      onClick={() => setApiBaseUrl(defaultOrigin)}
+                      className="text-xs font-semibold text-[#EA580C] dark:text-[#FB923C] hover:underline cursor-pointer"
+                    >
+                      Use current domain
+                    </button>
+                  )}
+                </div>
                 <input
                   id="embed-base-url"
                   type="url"
                   value={apiBaseUrl}
                   onChange={(e) => setApiBaseUrl(e.target.value)}
-                  placeholder="https://your-project.vercel.app"
+                  placeholder={defaultOrigin}
                   className="w-full h-11 sm:h-10 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                 />
                 <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
-                  Set this to your Vercel domain once deployed so the pasted widget fetches live codes.
+                  Automatically uses this installation’s live domain so pasted WordPress and HTML snippets work immediately.
                 </p>
               </div>
 

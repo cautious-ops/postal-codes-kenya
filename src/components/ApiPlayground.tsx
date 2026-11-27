@@ -142,9 +142,12 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
               Free Kenya Postal Codes API
             </h2>
+            <p className="mt-1.5 text-xs font-mono text-slate-500 dark:text-slate-400 truncate">
+              Base URL: <span className="text-[#EA580C] dark:text-[#FB923C]">{origin}</span>
+            </p>
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md">
-            Call one simple GET URL from JavaScript, PHP, WordPress, or cURL—no registration, rate-limit tokens, or auth headers needed.
+            Call one simple GET URL from JavaScript, PHP, WordPress, or cURL—auto-configured for your installed domain with zero auth headers needed.
           </p>
         </div>
 
