@@ -111,7 +111,7 @@ export function MobileBottomNav() {
           }`}
         >
           <BookOpen className="w-5 h-5" />
-          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Regions</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Counties</span>
         </button>
       </div>
     </nav>

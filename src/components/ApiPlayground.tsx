@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from 'react';
 import { Check, Copy, Play } from 'lucide-react';
 import {
+  KENYA_COUNTIES,
   POSTAL_ENTRIES,
   entriesToCsv,
-  getRegionsSummary,
+  getCountiesSummary,
   lookupByExactCode,
   queryPostalCodes,
+  resolveCountyFilter,
 } from '../../shared/postalService.ts';
 
-type EndpointKey = 'lookup' | 'exact' | 'regions' | 'csv' | 'health';
+type EndpointKey = 'lookup' | 'exact' | 'counties' | 'csv' | 'health';
 type SnippetLang = 'curl' | 'javascript' | 'php';
 
 interface ApiPlaygroundProps {
@@ -16,11 +18,13 @@ interface ApiPlaygroundProps {
 }
 
 const API_PRESETS = [
-  { label: 'Find Nairobi', key: 'lookup' as const, q: 'Nairobi', region: 'all', limit: '5' },
+  { label: 'Find Nairobi', key: 'lookup' as const, q: 'Nairobi', county: 'all', limit: '5' },
   { label: 'Code 00100', key: 'exact' as const, code: '00100' },
-  { label: 'Coast Offices', key: 'lookup' as const, q: '', region: '8', limit: '10' },
-  { label: 'All 647 JSON', key: 'lookup' as const, q: '', region: 'all', limit: 'all' },
+  { label: 'Mombasa County', key: 'lookup' as const, q: '', county: 'mombasa', limit: '10' },
+  { label: 'All 647 JSON', key: 'lookup' as const, q: '', county: 'all', limit: 'all' },
 ];
+
+const SORTED_COUNTIES = [...KENYA_COUNTIES].sort((a, b) => a.name.localeCompare(b.name));
 
 const ENDPOINT_DOCS: ReadonlyArray<{
   key: EndpointKey;
@@ -32,7 +36,7 @@ const ENDPOINT_DOCS: ReadonlyArray<{
     key: 'lookup',
     label: 'Simple Lookup',
     path: '/api/lookup?q=Nairobi',
-    summary: 'Search by town, region, or code',
+    summary: 'Search by town, county, or code',
   },
   {
     key: 'exact',
@@ -41,10 +45,10 @@ const ENDPOINT_DOCS: ReadonlyArray<{
     summary: 'Look up a single 5-digit code',
   },
   {
-    key: 'regions',
-    label: 'List Regions',
-    path: '/api/regions',
-    summary: 'All 10 Kenya postal zones',
+    key: 'counties',
+    label: 'List Counties',
+    path: '/api/counties',
+    summary: 'All 47 Kenyan counties',
   },
   {
     key: 'csv',
@@ -75,7 +79,7 @@ function resolveLocally(
           status: 'ok',
           baseUrl: origin,
           records: POSTAL_ENTRIES.length,
-          regions: 10,
+          counties: KENYA_COUNTIES.length,
           version: '1.0.0',
         },
         null,
@@ -84,13 +88,14 @@ function resolveLocally(
     };
   }
 
-  if (pathname === '/api/regions') {
+  if (pathname === '/api/counties' || pathname === '/api/regions') {
     return {
       status: 200,
       body: JSON.stringify(
         {
           totalRecords: POSTAL_ENTRIES.length,
-          regions: getRegionsSummary(),
+          totalCounties: KENYA_COUNTIES.length,
+          counties: getCountiesSummary(),
         },
         null,
         2
@@ -132,8 +137,9 @@ function resolveLocally(
       body: JSON.stringify(
         {
           code: matches[0].code,
-          regionId: matches[0].regionId,
-          regionName: matches[0].regionName,
+          countyCode: matches[0].countyCode,
+          countySlug: matches[0].countySlug,
+          countyName: matches[0].countyName,
           location: matches[0].location,
           matches,
         },
@@ -145,16 +151,16 @@ function resolveLocally(
 
   const q = url.searchParams.get('q')?.slice(0, 100) ?? undefined;
   const code = url.searchParams.get('code')?.slice(0, 10) ?? undefined;
-  const region = url.searchParams.get('region')?.slice(0, 10) ?? undefined;
+  const county = url.searchParams.get('county')?.slice(0, 60) ?? undefined;
   const format = (url.searchParams.get('format') ?? 'json').toLowerCase();
   const rawLimit = url.searchParams.get('limit') ?? undefined;
   const rawOffset = url.searchParams.get('offset') ?? undefined;
 
-  if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+  if (county && county.toLowerCase() !== 'all' && !resolveCountyFilter(county)) {
     return {
       status: 400,
       body: JSON.stringify(
-        { error: 'Invalid region parameter. Expected a single digit 0-9 or "all".' },
+        { error: 'Invalid county parameter. Expected a Kenyan county name, slug (e.g. mombasa), or code (001-047).' },
         null,
         2
       ),
@@ -172,7 +178,7 @@ function resolveLocally(
           : 50;
   const offset = !isLookup && rawOffset ? Number.parseInt(rawOffset, 10) : 0;
 
-  const payload = queryPostalCodes({ q, code, region, limit, offset });
+  const payload = queryPostalCodes({ q, code, county, limit, offset });
 
   if (format === 'csv') {
     return { status: 200, body: entriesToCsv(payload.results) };
@@ -184,6 +190,7 @@ function resolveLocally(
       body: JSON.stringify(
         {
           query: q ?? code ?? null,
+          county: county && county !== 'all' ? resolveCountyFilter(county)?.slug ?? county : 'all',
           total: payload.total,
           results: payload.results,
         },
@@ -199,7 +206,7 @@ function resolveLocally(
 export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
   const [endpointKey, setEndpointKey] = useState<EndpointKey>('lookup');
   const [qParam, setQParam] = useState('Nairobi');
-  const [regionParam, setRegionParam] = useState('all');
+  const [countyParam, setCountyParam] = useState('all');
   const [limitParam, setLimitParam] = useState('5');
   const [codeParam, setCodeParam] = useState('00100');
   const [snippetLang, setSnippetLang] = useState<SnippetLang>('javascript');
@@ -219,10 +226,10 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
 
   function buildPath(
     key: EndpointKey,
-    overrides?: { q?: string; region?: string; limit?: string; code?: string }
+    overrides?: { q?: string; county?: string; limit?: string; code?: string }
   ): string {
     const q = overrides?.q ?? qParam;
-    const region = overrides?.region ?? regionParam;
+    const county = overrides?.county ?? countyParam;
     const limit = overrides?.limit ?? limitParam;
     const code = overrides?.code ?? codeParam;
 
@@ -230,15 +237,15 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
       const safeCode = code.trim() || '00100';
       return `/api/postal-codes/${encodeURIComponent(safeCode)}`;
     }
-    if (key === 'regions') {
-      return '/api/regions';
+    if (key === 'counties') {
+      return '/api/counties';
     }
     if (key === 'health') {
       return '/api/health';
     }
     const params = new URLSearchParams();
     if (q.trim()) params.set('q', q.trim());
-    if (region && region !== 'all') params.set('region', region);
+    if (county && county !== 'all') params.set('county', county);
     if (limit.trim()) params.set('limit', limit.trim());
     if (key === 'csv') params.set('format', 'csv');
     const qs = params.toString();
@@ -388,12 +395,12 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                   void executeRequest(buildPath('exact', { code: preset.code }));
                 } else {
                   const q = 'q' in preset ? preset.q : '';
-                  const region = 'region' in preset ? preset.region : 'all';
+                  const county = 'county' in preset ? preset.county : 'all';
                   const limit = 'limit' in preset ? preset.limit : '10';
                   setQParam(q);
-                  setRegionParam(region);
+                  setCountyParam(county);
                   setLimitParam(limit);
-                  void executeRequest(buildPath('lookup', { q, region, limit }));
+                  void executeRequest(buildPath('lookup', { q, county, limit }));
                 }
               }}
               className="min-h-[40px] sm:min-h-0 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold transition-colors cursor-pointer whitespace-nowrap shrink-0"
@@ -461,7 +468,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                       htmlFor="api-q"
                       className="block text-xs text-slate-600 dark:text-slate-400 mb-1"
                     >
-                      q (search town, region, or partial code)
+                      q (search town, county, or partial code)
                     </label>
                     <input
                       id="api-q"
@@ -475,28 +482,23 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label
-                        htmlFor="api-region"
+                        htmlFor="api-county"
                         className="block text-xs text-slate-600 dark:text-slate-400 mb-1"
                       >
-                        region (0–9 or all)
+                        county (slug, 001–047, or all)
                       </label>
                       <select
-                        id="api-region"
-                        value={regionParam}
-                        onChange={(e) => setRegionParam(e.target.value)}
+                        id="api-county"
+                        value={countyParam}
+                        onChange={(e) => setCountyParam(e.target.value)}
                         className="w-full h-11 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                       >
-                        <option value="all">all</option>
-                        <option value="0">0 · Nairobi &amp; Metro</option>
-                        <option value="1">1 · Central</option>
-                        <option value="2">2 · South/Central Rift</option>
-                        <option value="3">3 · North Rift</option>
-                        <option value="4">4 · Nyanza</option>
-                        <option value="5">5 · Western</option>
-                        <option value="6">6 · Upper Eastern</option>
-                        <option value="7">7 · North Eastern</option>
-                        <option value="8">8 · Coast</option>
-                        <option value="9">9 · Lower Eastern</option>
+                        <option value="all">all (47 counties)</option>
+                        {SORTED_COUNTIES.map((county) => (
+                          <option key={county.slug} value={county.slug}>
+                            {county.code} · {county.name} County
+                          </option>
+                        ))}
                       </select>
                     </div>
                     <div>
@@ -538,9 +540,9 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                 </div>
               )}
 
-              {endpointKey === 'regions' && (
+              {endpointKey === 'counties' && (
                 <p className="text-xs text-slate-600 dark:text-slate-400 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg p-3">
-                  Returns all 10 Kenyan postal regions with office counts and min/max postal code ranges. No parameters required.
+                  Returns all 47 Kenyan counties (codes 001–047) with office counts, min/max postal codes, and sample offices. No parameters required.
                 </p>
               )}
 

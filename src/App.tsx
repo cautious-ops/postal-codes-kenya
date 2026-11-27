@@ -42,6 +42,7 @@ function getRouteFromPathname(): AppRoute {
 
 export default function App() {
   const [apiSelectedCode, setApiSelectedCode] = useState<string | null>(null);
+  const [selectedCounty, setSelectedCounty] = useState<string>('all');
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
   const [route, setRoute] = useState<AppRoute>(getRouteFromPathname);
 
@@ -95,7 +96,7 @@ export default function App() {
       const entry = findEntryBySlugOrCode(route.slug);
       if (entry) {
         title = `${entry.location} Postal Code (${entry.code}) – Kenya Posta Directory`;
-        description = `Official Kenya postal code for ${entry.location} (${entry.regionName}) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`;
+        description = `Official Kenya postal code for ${entry.location} (${entry.countyName} County) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`;
         canonicalUrl = `${origin}/postal-code/${entry.slug}`;
       }
     }
@@ -177,6 +178,17 @@ export default function App() {
     document.getElementById('api-explorer')?.scrollIntoView({ behavior: 'smooth' });
   }
 
+  function handleSelectCountyFromDirectory(countySlug: string) {
+    setSelectedCounty(countySlug);
+    pushPath('/', { kind: 'home' });
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        const el = document.getElementById('counties-filter') ?? document.getElementById('lookup');
+        el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+  }
+
   function handleSelectForApi(entry: PostalEntry) {
     setApiSelectedCode(entry.code);
     scrollToApi();
@@ -211,6 +223,8 @@ export default function App() {
               theme={theme}
               onThemeChange={setTheme}
               activeSlug={activeSlug}
+              selectedCounty={selectedCounty}
+              onSelectCounty={setSelectedCounty}
               onSelectSlug={handleSelectSlug}
               onSelectForApi={handleSelectForApi}
             />
@@ -219,7 +233,10 @@ export default function App() {
             <ApiPlayground externalCodeQuery={apiSelectedCode} />
             <EmbedWidgetGenerator onSelectSlug={handleSelectSlug} />
             <AdSlot placement="embed-directory-break" variant="compact" />
-            <MigrationGuide onSelectSlug={handleSelectSlug} />
+            <MigrationGuide
+              onSelectSlug={handleSelectSlug}
+              onSelectCounty={handleSelectCountyFromDirectory}
+            />
             <AdSlot placement="footer-multiplex" variant="multiplex" />
           </>
         )}

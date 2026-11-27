@@ -1,5 +1,10 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { POSTAL_ENTRIES, entriesToCsv, queryPostalCodes } from '../shared/postalService.ts';
+import {
+  POSTAL_ENTRIES,
+  entriesToCsv,
+  queryPostalCodes,
+  resolveCountyFilter,
+} from '../shared/postalService.ts';
 
 interface VercelRequest extends IncomingMessage {
   query?: Record<string, string | string[] | undefined>;
@@ -41,13 +46,16 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const q = getParam(req, 'q')?.slice(0, 100);
     const code = getParam(req, 'code')?.slice(0, 10);
-    const region = getParam(req, 'region')?.slice(0, 10);
+    const county = getParam(req, 'county')?.slice(0, 60);
     const format = (getParam(req, 'format') ?? 'json').toLowerCase();
     const limitRaw = getParam(req, 'limit');
 
-    if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+    const resolvedCounty =
+      county && county.toLowerCase() !== 'all' ? resolveCountyFilter(county) : undefined;
+
+    if (county && county.toLowerCase() !== 'all' && !resolvedCounty) {
       res.status(400).json({
-        error: 'Invalid region parameter. Expected a single digit 0-9 or "all".',
+        error: 'Unknown Kenyan county. Pass a county slug (e.g. "nairobi", "mombasa", "uasin-gishu"), county code ("047"), or "all".',
       });
       return;
     }
@@ -59,7 +67,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
           ? Number.parseInt(limitRaw, 10)
           : 20;
 
-    const result = queryPostalCodes({ q, code, region, limit, offset: 0 });
+    const result = queryPostalCodes({ q, code, county, limit, offset: 0 });
 
     if (format === 'csv') {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -72,6 +80,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json({
       query: q ?? code ?? null,
+      county: resolvedCounty?.slug ?? null,
       total: result.total,
       results: result.results,
     });

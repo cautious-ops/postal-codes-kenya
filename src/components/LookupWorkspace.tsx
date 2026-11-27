@@ -14,11 +14,11 @@ import {
   X,
 } from 'lucide-react';
 import {
-  KENYA_REGIONS,
+  KENYA_COUNTIES,
   POSTAL_ENTRIES,
   entriesToCsv,
   findEntryBySlugOrCode,
-  getRegionsSummary,
+  getCountiesSummary,
   getRelatedEntries,
   queryPostalCodes,
   type PostalEntry,
@@ -32,21 +32,38 @@ interface LookupWorkspaceProps {
   theme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
   activeSlug: string | null;
+  selectedCounty: string;
+  onSelectCounty: (county: string) => void;
   onSelectSlug: (slug: string | null) => void;
   onSelectForApi?: (entry: PostalEntry) => void;
 }
 
 const QUICK_SEARCH_TERMS = ['Nairobi GPO', '00100', 'Nakuru', 'Eldoret GPO', 'Nyali', 'Westlands'];
+const TOP_COUNTY_SLUGS = [
+  'nairobi',
+  'kiambu',
+  'nakuru',
+  'kisumu',
+  'mombasa',
+  'uasin-gishu',
+  'machakos',
+  'kajiado',
+  'kakamega',
+  'kilifi',
+  'meru',
+  'nyeri',
+];
 
 export function LookupWorkspace({
   theme,
   onThemeChange,
   activeSlug,
+  selectedCounty,
+  onSelectCounty,
   onSelectSlug,
   onSelectForApi,
 }: LookupWorkspaceProps) {
   const [query, setQuery] = useState('');
-  const [selectedRegion, setSelectedRegion] = useState<string>('all');
   const [viewMode, setViewMode] = useState<ViewMode>('cards');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [activeSuggestionIdx, setActiveSuggestionIdx] = useState(-1);
@@ -57,7 +74,18 @@ export function LookupWorkspace({
   const searchContainerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const regionSummaries = useMemo(() => getRegionsSummary(), []);
+  const countySummaries = useMemo(() => getCountiesSummary(), []);
+  const alphabeticalCounties = useMemo(
+    () => [...countySummaries].sort((a, b) => a.name.localeCompare(b.name)),
+    [countySummaries]
+  );
+  const quickCounties = useMemo(
+    () =>
+      TOP_COUNTY_SLUGS.map((slug) => countySummaries.find((c) => c.slug === slug)).filter(
+        (c): c is NonNullable<typeof c> => Boolean(c)
+      ),
+    [countySummaries]
+  );
 
   const activeEntry = useMemo(
     () => (activeSlug ? findEntryBySlugOrCode(activeSlug) ?? null : null),
@@ -72,11 +100,11 @@ export function LookupWorkspace({
   const searchResult = useMemo(() => {
     return queryPostalCodes({
       q: query,
-      region: selectedRegion,
+      county: selectedCounty,
       limit: POSTAL_ENTRIES.length,
       offset: 0,
     });
-  }, [query, selectedRegion]);
+  }, [query, selectedCounty]);
 
   const visibleEntries = useMemo(() => {
     return searchResult.results.slice(0, displayLimit);
@@ -128,7 +156,7 @@ export function LookupWorkspace({
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    const suffix = selectedRegion === 'all' ? 'all' : `region-${selectedRegion}`;
+    const suffix = selectedCounty === 'all' ? 'all' : `county-${selectedCounty}`;
     link.download = `kenya-postal-codes-${suffix}.csv`;
     document.body.appendChild(link);
     link.click();
@@ -138,7 +166,7 @@ export function LookupWorkspace({
 
   function handleSuggestionPick(entry: PostalEntry) {
     setQuery(entry.location);
-    setSelectedRegion('all');
+    onSelectCounty('all');
     setShowSuggestions(false);
     setActiveSuggestionIdx(-1);
     onSelectSlug(entry.slug);
@@ -169,7 +197,7 @@ export function LookupWorkspace({
 
   function handleClear() {
     setQuery('');
-    setSelectedRegion('all');
+    onSelectCounty('all');
     setDisplayLimit(36);
     setShowSuggestions(false);
     setActiveSuggestionIdx(-1);
@@ -205,7 +233,7 @@ export function LookupWorkspace({
               if (query.trim().length > 0) setShowSuggestions(true);
             }}
             onKeyDown={handleInputKeyDown}
-            placeholder="Search town, region, or code (e.g. 00100)"
+            placeholder="Search town, county, or code (e.g. 00100)"
             aria-label="Search Kenyan location or postal code"
             aria-autocomplete="list"
             aria-expanded={showSuggestions && suggestions.length > 0}
@@ -244,7 +272,7 @@ export function LookupWorkspace({
                       <span className="font-medium text-sm text-slate-900 dark:text-slate-100 truncate">
                         {item.location}{' '}
                         <span className="text-slate-500 dark:text-slate-400 font-normal">
-                          · {item.regionName}
+                          · {item.countyName} County
                         </span>
                       </span>
                       <span className="font-mono font-semibold text-sm text-[#EA580C] dark:text-[#FB923C] shrink-0">
@@ -265,7 +293,7 @@ export function LookupWorkspace({
           >
             Search Codes
           </button>
-          {(query || selectedRegion !== 'all') && (
+          {(query || selectedCounty !== 'all') && (
             <button
               type="button"
               onClick={handleClear}
@@ -285,7 +313,7 @@ export function LookupWorkspace({
             type="button"
             onClick={() => {
               setQuery(term);
-              setSelectedRegion('all');
+              onSelectCounty('all');
               setDisplayLimit(36);
               setShowSuggestions(false);
             }}
@@ -356,7 +384,7 @@ export function LookupWorkspace({
                   All {POSTAL_ENTRIES.length} Kenya Postal Codes
                 </button>
                 <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
-                  {activeEntry.regionName} · Prefix {activeEntry.prefix}xxx
+                  {activeEntry.countyName} County · County Code {activeEntry.countyCode}
                 </span>
               </div>
 
@@ -366,7 +394,7 @@ export function LookupWorkspace({
                     {activeEntry.location} Postal Code
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl">
-                    The official Kenyan postal code for <strong className="text-slate-900 dark:text-white">{activeEntry.location}</strong> in the {activeEntry.regionName} zone is{' '}
+                    The official Kenyan postal code for <strong className="text-slate-900 dark:text-white">{activeEntry.location}</strong> in {activeEntry.countyName} County is{' '}
                     <strong className="font-mono text-[#EA580C] dark:text-[#FB923C]">{activeEntry.code}</strong>. Use this 5-digit code for courier deliveries, shipping forms, and mail addressing in Kenya.
                   </p>
                 </div>
@@ -419,7 +447,7 @@ export function LookupWorkspace({
               {relatedEntries.length > 0 && (
                 <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2 text-xs">
                   <span className="text-slate-500 dark:text-slate-400 font-medium">
-                    Nearby in {activeEntry.regionName}:
+                    Other offices in {activeEntry.countyName} County:
                   </span>
                   {relatedEntries.map((rel) => (
                     <a
@@ -458,7 +486,7 @@ export function LookupWorkspace({
                     Find any Kenyan postal code in milliseconds.
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-                    Search by town, institution, or 5-digit code. Filter 10 regions, copy codes, or call the free JSON/CSV API.
+                    Search by town, county, or 5-digit code. Filter all 47 Kenyan counties, copy codes, or call the free JSON/CSV API.
                   </p>
                 </div>
               </div>
@@ -484,9 +512,9 @@ export function LookupWorkspace({
                   </p>
                 </div>
                 <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Regions</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Counties</p>
                   <p className="mt-0.5 font-mono text-base font-bold text-slate-900 dark:text-slate-50 tabular-nums">
-                    10
+                    {KENYA_COUNTIES.length}
                   </p>
                 </div>
                 <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
@@ -501,38 +529,57 @@ export function LookupWorkspace({
         )}
 
         <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 shadow-xs transition-colors">
-          <div id="regions">
+          <div id="counties-filter" className="scroll-mt-4 md:scroll-mt-20 flex flex-col lg:flex-row lg:items-center gap-3">
+            <div className="shrink-0 sm:w-64">
+              <select
+                value={selectedCounty}
+                onChange={(e) => {
+                  onSelectCounty(e.target.value);
+                  setDisplayLimit(60);
+                }}
+                aria-label="Filter by Kenyan county"
+                className="w-full h-11 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-base text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/20"
+              >
+                <option value="all">All 47 Counties ({POSTAL_ENTRIES.length})</option>
+                {alphabeticalCounties.map((county) => (
+                  <option key={county.slug} value={county.slug}>
+                    {county.name} County ({county.count})
+                  </option>
+                ))}
+              </select>
+            </div>
+
             <div
-              className="flex flex-nowrap overflow-x-auto sm:flex-wrap items-center gap-2 sm:gap-1.5 no-scrollbar pb-1"
+              className="flex flex-nowrap overflow-x-auto items-center gap-1.5 no-scrollbar pb-1 lg:pb-0 flex-1 min-w-0"
               role="tablist"
-              aria-label="Filter by postal region"
+              aria-label="Quick filter major Kenyan counties"
             >
               <button
                 type="button"
                 role="tab"
-                aria-selected={selectedRegion === 'all'}
+                aria-selected={selectedCounty === 'all'}
                 onClick={() => {
-                  setSelectedRegion('all');
+                  onSelectCounty('all');
                   setDisplayLimit(36);
                 }}
                 className={`min-h-[42px] sm:min-h-0 px-3.5 py-2 sm:px-3 sm:py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
-                  selectedRegion === 'all'
+                  selectedCounty === 'all'
                     ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
                     : 'bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800'
                 }`}
               >
-                All Regions ({POSTAL_ENTRIES.length})
+                All ({POSTAL_ENTRIES.length})
               </button>
-              {regionSummaries.map((region) => {
-                const active = selectedRegion === region.id;
+              {quickCounties.map((county) => {
+                const active = selectedCounty === county.slug;
                 return (
                   <button
-                    key={region.id}
+                    key={county.slug}
                     type="button"
                     role="tab"
                     aria-selected={active}
                     onClick={() => {
-                      setSelectedRegion(region.id);
+                      onSelectCounty(county.slug);
                       setDisplayLimit(60);
                     }}
                     className={`min-h-[42px] sm:min-h-0 px-3.5 py-2 sm:px-3 sm:py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
@@ -541,8 +588,7 @@ export function LookupWorkspace({
                         : 'bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800'
                     }`}
                   >
-                    <span className="font-mono opacity-80 mr-1">{region.id}xxxx</span>
-                    {region.name} ({region.count})
+                    {county.name} ({county.count})
                   </button>
                 );
               })}
@@ -554,10 +600,10 @@ export function LookupWorkspace({
               Showing <span className="font-semibold text-slate-900 dark:text-slate-100">{visibleEntries.length}</span> of{' '}
               <span className="font-semibold text-slate-900 dark:text-slate-100">{searchResult.total}</span> matching{' '}
               {searchResult.total === 1 ? 'office' : 'offices'}
-              {selectedRegion !== 'all' && (
+              {selectedCounty !== 'all' && (
                 <span>
                   {' '}
-                  · {KENYA_REGIONS.find((r) => r.id === selectedRegion)?.name}
+                  · {KENYA_COUNTIES.find((c) => c.slug === selectedCounty)?.name} County
                 </span>
               )}
             </div>
@@ -658,7 +704,7 @@ export function LookupWorkspace({
                             {entry.location}
                           </a>
                           <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
-                            {entry.regionName} · Prefix {entry.prefix}xxx
+                            {entry.countyName} County
                           </p>
                         </div>
                         <button
@@ -720,7 +766,7 @@ export function LookupWorkspace({
                 <thead>
                   <tr className="bg-slate-50 dark:bg-[#0B0F17] border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
                     <th className="py-2.5 px-4">Location / Post Office</th>
-                    <th className="py-2.5 px-4">Region</th>
+                    <th className="py-2.5 px-4">County</th>
                     <th className="py-2.5 px-4 text-right whitespace-nowrap">Postal Code</th>
                     <th className="py-2.5 px-4 text-right whitespace-nowrap">Action</th>
                   </tr>
@@ -747,7 +793,7 @@ export function LookupWorkspace({
                           </a>
                         </td>
                         <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                          {entry.regionName}
+                          {entry.countyName} County
                         </td>
                         <td className="py-2.5 px-4 text-right font-mono font-bold text-[#EA580C] dark:text-[#FB923C] whitespace-nowrap">
                           <a

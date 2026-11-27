@@ -1,7 +1,10 @@
-import { getRegionsSummary } from '../../shared/postalService.ts';
+import { useMemo, useState } from 'react';
+import { Search } from 'lucide-react';
+import { getCountiesSummary } from '../../shared/postalService.ts';
 
 interface MigrationGuideProps {
   onSelectSlug: (slug: string) => void;
+  onSelectCounty?: (countySlug: string) => void;
 }
 
 const POPULAR_OFFICES = [
@@ -42,24 +45,38 @@ const FAQS = [
   },
   {
     q: 'What is the postal code for Mombasa, Kenya?',
-    a: 'Mombasa and Kenya’s Coast region use 80xxx postal codes, including Bamburi (80101), Changamwe (80102), Likoni (80110), Nyali (80118), Malindi (80200), and Ukunda (80400).',
+    a: 'Mombasa County uses 801xx postal codes including Bamburi (80101), Changamwe (80102), Likoni (80110), Makupa (80112), and Nyali (80118). Neighbouring coastal counties use Kilifi (80108/80200 Malindi) and Kwale (80400 Ukunda).',
   },
   {
     q: 'How do you write a Kenyan postal address?',
     a: 'Place the recipient name on line 1, the box and 5-digit code on line 2 (e.g., P.O. Box 12345 – 00100), and the post office town plus Kenya on line 3 (Nairobi GPO, Kenya).',
   },
   {
-    q: 'How many digits is a Kenyan postal code?',
-    a: 'Every official postal code in Kenya uses a 5-digit number ranging from 00100 to 90408, where the first digit designates one of Kenya’s 10 regional postal zones.',
+    q: 'How are postal codes organized across Kenya’s 47 counties?',
+    a: 'Every official postal code in Kenya uses 5 digits from 00100 to 90408 mapped to post offices across all 47 counties—such as Nairobi (00100–00800), Nakuru (20100–20157), Kajiado (00205–01103), and Mombasa (80101–80118).',
   },
   {
     q: 'How do I embed this postal code lookup on WordPress?',
-    a: 'Use the WordPress / HTML generator above, copy the snippet, add a Custom HTML block in WordPress, paste the code, and publish. It connects directly to the free public API.',
+    a: 'Use the Embed Generator above, pick your format and style, copy the snippet, and paste it into a Custom HTML block or page template. It connects directly to the free public API.',
   },
 ];
 
-export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
-  const regions = getRegionsSummary();
+export function MigrationGuide({ onSelectSlug, onSelectCounty }: MigrationGuideProps) {
+  const [countySearch, setCountySearch] = useState('');
+  const allCounties = useMemo(() => getCountiesSummary(), []);
+
+  const filteredCounties = useMemo(() => {
+    const q = countySearch.trim().toLowerCase();
+    if (!q) return allCounties;
+    return allCounties.filter(
+      (c) =>
+        c.name.toLowerCase().includes(q) ||
+        c.code.includes(q) ||
+        c.headquarters.toLowerCase().includes(q) ||
+        c.sampleOffices.toLowerCase().includes(q) ||
+        c.aliases.toLowerCase().includes(q)
+    );
+  }, [allCounties, countySearch]);
 
   return (
     <section
@@ -108,7 +125,7 @@ export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
               How Kenya Postal Codes &amp; ZIP Codes Work
             </h2>
             <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Kenya uses a structured 5-digit postal code system from <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">00100</span> to <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">90408</span>. The first digit identifies one of 10 regional routing zones, while the last four digits route parcels to a specific post office. Whenever an international checkout form asks for a <strong className="text-slate-900 dark:text-slate-100">Kenya ZIP code</strong>, use your nearest town&apos;s 5-digit postal code rather than the +254 phone code.
+              Kenya uses a structured 5-digit postal code system from <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">00100</span> to <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">90408</span> covering post offices across all 47 counties. For example, Nairobi County uses <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">00100–00800</span>, Nakuru County uses <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">20100–20157</span>, and Mombasa County uses <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">80101–80118</span>. Whenever an online form asks for a <strong className="text-slate-900 dark:text-slate-100">Kenya ZIP code</strong>, enter your local post office&apos;s 5-digit code rather than +254.
             </p>
           </div>
 
@@ -131,49 +148,87 @@ Nairobi GPO, Kenya`}
         </div>
 
         <div>
-          <div className="max-w-2xl mb-6">
-            <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
-              Postal Prefix Architecture
-            </p>
-            <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
-              Kenya’s 10 Regional Code Zones
-            </h2>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+            <div className="max-w-2xl">
+              <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
+                001 Mombasa to 047 Nairobi
+              </p>
+              <h2 className="text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50">
+                Kenya’s 47 Counties Postal Directory
+              </h2>
+            </div>
+
+            <div className="relative w-full sm:w-72">
+              <Search
+                aria-hidden="true"
+                className="w-4 h-4 text-slate-400 dark:text-slate-500 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              />
+              <input
+                type="text"
+                value={countySearch}
+                onChange={(e) => setCountySearch(e.target.value)}
+                placeholder="Filter 47 counties or town..."
+                aria-label="Filter Kenyan counties directory"
+                className="w-full h-11 pl-9 pr-3 bg-slate-50 dark:bg-[#111827] border border-slate-200 dark:border-slate-700 rounded-xl text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 focus:border-[#F38020] focus:outline-none"
+              />
+            </div>
           </div>
 
-          <div className="overflow-x-auto bg-slate-50 dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl">
-            <table className="w-full min-w-[600px] text-left border-collapse">
-              <thead>
+          <div className="overflow-x-auto bg-slate-50 dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl max-h-[540px] overflow-y-auto">
+            <table className="w-full min-w-[640px] text-left border-collapse">
+              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-[#111827]">
                 <tr className="border-b border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-600 dark:text-slate-400">
-                  <th className="py-3 px-4 whitespace-nowrap">Prefix</th>
-                  <th className="py-3 px-4 whitespace-nowrap">Region</th>
-                  <th className="py-3 px-4">Major Postal Hubs</th>
-                  <th className="py-3 px-4 text-right whitespace-nowrap">Range</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Code</th>
+                  <th className="py-3 px-4 whitespace-nowrap">County</th>
+                  <th className="py-3 px-4">Sample Post Offices</th>
+                  <th className="py-3 px-4 text-right whitespace-nowrap">Postal Range</th>
                   <th className="py-3 px-4 text-right whitespace-nowrap">Offices</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200/70 dark:divide-slate-800/80 text-sm bg-white dark:bg-[#0B0F17]">
-                {regions.map((region) => (
+                {filteredCounties.map((county) => (
                   <tr
-                    key={region.id}
+                    key={county.slug}
                     className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                   >
                     <td className="py-2.5 px-4 font-mono font-semibold text-[#EA580C] dark:text-[#FB923C] whitespace-nowrap">
-                      {region.prefixRange}
+                      {county.code}
                     </td>
                     <td className="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-                      {region.name}
+                      {onSelectCounty ? (
+                        <button
+                          type="button"
+                          onClick={() => onSelectCounty(county.slug)}
+                          className="text-left hover:text-[#EA580C] dark:hover:text-[#FB923C] hover:underline cursor-pointer"
+                        >
+                          {county.name} County
+                        </button>
+                      ) : (
+                        <span>{county.name} County</span>
+                      )}
                     </td>
                     <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400">
-                      {region.majorHubs}
+                      {county.sampleOffices || county.aliases}
                     </td>
                     <td className="py-2.5 px-4 text-right font-mono text-xs text-slate-600 dark:text-slate-400 whitespace-nowrap">
-                      {region.minCode}–{region.maxCode}
+                      {county.minCode && county.maxCode
+                        ? county.minCode === county.maxCode
+                          ? county.minCode
+                          : `${county.minCode}–${county.maxCode}`
+                        : '—'}
                     </td>
                     <td className="py-2.5 px-4 text-right font-mono font-semibold text-slate-900 dark:text-slate-100 whitespace-nowrap">
-                      {region.count}
+                      {county.count}
                     </td>
                   </tr>
                 ))}
+                {filteredCounties.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-8 px-4 text-center text-sm text-slate-500 dark:text-slate-400">
+                      No Kenyan county matches &ldquo;{countySearch}&rdquo;.
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>

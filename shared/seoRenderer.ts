@@ -95,7 +95,7 @@ export function buildSeoHtmlPage(slug: string, baseUrl: string): { status: numbe
   }
 
   const title = `${entry.location} Postal Code (${entry.code}) – Kenya Posta Directory`;
-  const description = `The official Kenya postal code for ${entry.location} (${entry.regionName} region) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`;
+  const description = `The official Kenya postal code for ${entry.location} (${entry.countyName} County) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`;
 
   return {
     status: 200,
@@ -139,7 +139,7 @@ function renderHtmlShell(params: {
           '@context': 'https://schema.org',
           '@type': 'PostalAddress',
           addressLocality: entry.location,
-          addressRegion: entry.regionName,
+          addressRegion: `${entry.countyName} County`,
           postalCode: entry.code,
           addressCountry: 'KE',
         },
@@ -152,15 +152,15 @@ function renderHtmlShell(params: {
               name: `What is the postal code for ${entry.location}, Kenya?`,
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: `The postal code for ${entry.location} in Kenya's ${entry.regionName} region is ${entry.code}.`,
+                text: `The postal code for ${entry.location} in ${entry.countyName} County, Kenya is ${entry.code}.`,
               },
             },
             {
               '@type': 'Question',
-              name: `Which postal region is ${entry.code} in?`,
+              name: `Which county is postal code ${entry.code} in?`,
               acceptedAnswer: {
                 '@type': 'Answer',
-                text: `Postal code ${entry.code} (${entry.location}) belongs to the ${entry.regionName} postal zone (prefix ${entry.prefix}xxx).`,
+                text: `Postal code ${entry.code} (${entry.location}) serves ${entry.countyName} County (County Code ${entry.countyCode}).`,
               },
             },
           ],
@@ -206,15 +206,15 @@ function renderHtmlShell(params: {
 </head>
 <body>
   <main class="card">
-    <p><a href="${escapeHtml(`${baseUrl}/`)}">Kenya Postal Code Directory</a> / ${entry ? escapeHtml(entry.regionName) : 'Lookup'}</p>
+    <p><a href="${escapeHtml(`${baseUrl}/`)}">Kenya Postal Code Directory</a> / ${entry ? `${escapeHtml(entry.countyName)} County` : 'Lookup'}</p>
     ${
       entry
         ? `<h1>${escapeHtml(entry.location)} Postal Code</h1>
     <div class="code">${escapeHtml(entry.code)}</div>
-    <p><strong>${escapeHtml(entry.location)}</strong> is a Kenyan post office in the <strong>${escapeHtml(entry.regionName)}</strong> region (code prefix ${escapeHtml(entry.prefix)}xxx). Use postal code <strong>${escapeHtml(entry.code)}</strong> for mail, shipping, courier deliveries, and address forms in ${escapeHtml(entry.location)}, Kenya.</p>
+    <p><strong>${escapeHtml(entry.location)}</strong> is a Kenyan post office in <strong>${escapeHtml(entry.countyName)} County</strong>. Use postal code <strong>${escapeHtml(entry.code)}</strong> for mail, shipping, courier deliveries, and address forms in ${escapeHtml(entry.location)}, Kenya.</p>
     <p><strong>Address format:</strong> P.O. Box [Number] – ${escapeHtml(entry.code)}, ${escapeHtml(entry.location)}, Kenya</p>
     <p>API lookup: <code>${escapeHtml(`${baseUrl}/api/postal-codes/${entry.code}`)}</code></p>
-    <h2>Other Post Offices in ${escapeHtml(entry.regionName)}</h2>
+    <h2>Other Post Offices in ${escapeHtml(entry.countyName)} County</h2>
     <ul>
       ${relatedLinks}
     </ul>`

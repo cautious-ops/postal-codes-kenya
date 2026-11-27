@@ -331,7 +331,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                           <span className="text-sm font-medium text-slate-900 dark:text-slate-100 truncate">
                             {item.location}{' '}
                             <span className="text-xs font-normal text-slate-500 dark:text-slate-400">
-                              · {item.regionName}
+                              · {item.countyName} County
                             </span>
                           </span>
                           <span className="font-mono text-sm font-semibold text-[#EA580C] dark:text-[#FB923C] shrink-0">
@@ -397,7 +397,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                     </span>
                   </div>
                   <span className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">
-                    {effectiveOffice.regionName} · Code {effectiveOffice.code}
+                    {effectiveOffice.countyName} County · Code {effectiveOffice.code}
                   </span>
                 </div>
 

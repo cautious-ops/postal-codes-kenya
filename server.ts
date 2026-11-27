@@ -4,9 +4,10 @@ import { fileURLToPath } from 'node:url';
 import {
   POSTAL_ENTRIES,
   entriesToCsv,
-  getRegionsSummary,
+  getCountiesSummary,
   lookupByExactCode,
   queryPostalCodes,
+  resolveCountyFilter,
 } from './shared/postalService.ts';
 import {
   buildLegalHtmlPage,
@@ -98,29 +99,33 @@ async function createServer() {
       status: 'ok',
       baseUrl: getRequestBaseUrl(req),
       records: POSTAL_ENTRIES.length,
-      regions: 10,
+      counties: 47,
       version: '1.0.0',
     });
   });
 
-  app.get('/api/regions', (_req, res) => {
-    const regions = getRegionsSummary();
+  app.get(['/api/counties', '/api/regions'], (_req, res) => {
+    const counties = getCountiesSummary();
     res.json({
       totalRecords: POSTAL_ENTRIES.length,
-      regions,
+      totalCounties: counties.length,
+      counties,
     });
   });
 
   app.get('/api/lookup', (req, res) => {
     const q = typeof req.query.q === 'string' ? req.query.q.slice(0, 100) : undefined;
     const code = typeof req.query.code === 'string' ? req.query.code.slice(0, 10) : undefined;
-    const region = typeof req.query.region === 'string' ? req.query.region.slice(0, 10) : undefined;
+    const county = typeof req.query.county === 'string' ? req.query.county.slice(0, 60) : undefined;
     const format = typeof req.query.format === 'string' ? req.query.format.toLowerCase() : 'json';
     const rawLimit = typeof req.query.limit === 'string' ? req.query.limit : undefined;
 
-    if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+    const resolvedCounty =
+      county && county.toLowerCase() !== 'all' ? resolveCountyFilter(county) : undefined;
+
+    if (county && county.toLowerCase() !== 'all' && !resolvedCounty) {
       res.status(400).json({
-        error: 'Invalid region parameter. Expected a single digit 0-9 or "all".',
+        error: 'Unknown Kenyan county. Pass a county slug (e.g. "nairobi", "mombasa"), county code ("047"), or "all".',
       });
       return;
     }
@@ -131,7 +136,7 @@ async function createServer() {
         ? Number.parseInt(rawLimit, 10)
         : 20;
 
-    const payload = queryPostalCodes({ q, code, region, limit, offset: 0 });
+    const payload = queryPostalCodes({ q, code, county, limit, offset: 0 });
 
     if (format === 'csv') {
       res.setHeader('Content-Type', 'text/csv; charset=utf-8');
@@ -144,6 +149,7 @@ async function createServer() {
 
     res.json({
       query: q ?? code ?? null,
+      county: resolvedCounty?.slug ?? null,
       total: payload.total,
       results: payload.results,
     });
@@ -152,7 +158,7 @@ async function createServer() {
   app.get('/api/postal-codes', (req, res) => {
     const q = typeof req.query.q === 'string' ? req.query.q.slice(0, 100) : undefined;
     const code = typeof req.query.code === 'string' ? req.query.code.slice(0, 10) : undefined;
-    const region = typeof req.query.region === 'string' ? req.query.region.slice(0, 10) : undefined;
+    const county = typeof req.query.county === 'string' ? req.query.county.slice(0, 60) : undefined;
     const format = typeof req.query.format === 'string' ? req.query.format.toLowerCase() : 'json';
 
     const rawLimit = typeof req.query.limit === 'string' ? req.query.limit : undefined;
@@ -165,14 +171,14 @@ async function createServer() {
     const rawOffset = typeof req.query.offset === 'string' ? req.query.offset : undefined;
     const offset = rawOffset ? Number.parseInt(rawOffset, 10) : 0;
 
-    if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+    if (county && county.toLowerCase() !== 'all' && !resolveCountyFilter(county)) {
       res.status(400).json({
-        error: 'Invalid region parameter. Expected a single digit 0-9 or "all".',
+        error: 'Unknown Kenyan county. Pass a county slug (e.g. "nairobi", "mombasa"), county code ("047"), or "all".',
       });
       return;
     }
 
-    const payload = queryPostalCodes({ q, code, region, limit, offset });
+    const payload = queryPostalCodes({ q, code, county, limit, offset });
 
     if (format === 'csv') {
       const csv = entriesToCsv(payload.results);
@@ -208,8 +214,9 @@ async function createServer() {
 
     res.json({
       code: matches[0].code,
-      regionId: matches[0].regionId,
-      regionName: matches[0].regionName,
+      countyCode: matches[0].countyCode,
+      countySlug: matches[0].countySlug,
+      countyName: matches[0].countyName,
       location: matches[0].location,
       matches,
     });

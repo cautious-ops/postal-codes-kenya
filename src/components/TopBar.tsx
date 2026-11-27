@@ -59,7 +59,7 @@ export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
             href="#migration"
             className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Directory
+            Counties
           </a>
         </nav>
 

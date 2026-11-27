@@ -208,7 +208,7 @@ export function buildHtmlWidgetSnippet({
     if(!q){box.innerHTML='<p class="kpc-empty">Type a town or postal code to look it up.</p>';return;}
     if(!rows.length){box.innerHTML='<p class="kpc-empty">No postal code found for "'+esc(q)+'".</p>';return;}
     box.innerHTML = rows.map(function(r){
-      return '<div class="kpc-item"><div><div class="kpc-loc">'+esc(r.location)+'</div><div class="kpc-reg">'+esc(r.regionName)+'</div></div><div class="kpc-right"><span class="kpc-code">'+esc(r.code)+'</span><button type="button" class="kpc-copy" data-code="'+esc(r.code)+'">Copy</button></div></div>';
+      return '<div class="kpc-item"><div><div class="kpc-loc">'+esc(r.location)+'</div><div class="kpc-reg">'+esc(r.countyName)+' County</div></div><div class="kpc-right"><span class="kpc-code">'+esc(r.code)+'</span><button type="button" class="kpc-copy" data-code="'+esc(r.code)+'">Copy</button></div></div>';
     }).join("");
   }
   async function runSearch(){
@@ -382,7 +382,7 @@ export function KenyaAddressWidget() {
 interface PostalItem {
   location: string;
   code: string;
-  regionName: string;
+  countyName: string;
 }
 
 export function KenyaPostalWidget() {

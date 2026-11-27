@@ -60,8 +60,9 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
 
     res.status(200).json({
       code: matches[0].code,
-      regionId: matches[0].regionId,
-      regionName: matches[0].regionName,
+      countyCode: matches[0].countyCode,
+      countySlug: matches[0].countySlug,
+      countyName: matches[0].countyName,
       location: matches[0].location,
       matches,
     });

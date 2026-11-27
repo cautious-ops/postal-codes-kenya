@@ -412,7 +412,7 @@ export function EmbedWidgetGenerator({ onSelectSlug }: EmbedWidgetGeneratorProps
                                   widgetTheme === 'dark' ? 'text-slate-400' : 'text-slate-500'
                                 }`}
                               >
-                                {row.regionName}
+                                {row.countyName} County
                               </p>
                             )}
                           </div>

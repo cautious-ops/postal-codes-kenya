@@ -22,7 +22,7 @@ export default function handler(req: IncomingMessage, res: VercelResponse) {
       status: 'ok',
       baseUrl: resolveRequestBaseUrl(req.headers),
       records: POSTAL_ENTRIES.length,
-      regions: 10,
+      counties: 47,
       version: '1.0.0',
     });
   } catch (err) {

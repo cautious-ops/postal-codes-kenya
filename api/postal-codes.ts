@@ -1,5 +1,10 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
-import { POSTAL_ENTRIES, entriesToCsv, queryPostalCodes } from '../shared/postalService.ts';
+import {
+  POSTAL_ENTRIES,
+  entriesToCsv,
+  queryPostalCodes,
+  resolveCountyFilter,
+} from '../shared/postalService.ts';
 
 interface VercelRequest extends IncomingMessage {
   query?: Record<string, string | string[] | undefined>;
@@ -41,12 +46,12 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const q = getParam(req, 'q')?.slice(0, 100);
     const code = getParam(req, 'code')?.slice(0, 10);
-    const region = getParam(req, 'region')?.slice(0, 10);
+    const county = getParam(req, 'county')?.slice(0, 60);
     const format = (getParam(req, 'format') ?? 'json').toLowerCase();
 
-    if (region && region !== 'all' && !/^[0-9]$/.test(region)) {
+    if (county && county.toLowerCase() !== 'all' && !resolveCountyFilter(county)) {
       res.status(400).json({
-        error: 'Invalid region parameter. Expected a single digit 0-9 or "all".',
+        error: 'Unknown Kenyan county. Pass a county slug (e.g. "nairobi", "mombasa"), county code ("047"), or "all".',
       });
       return;
     }
@@ -61,7 +66,7 @@ export default function handler(req: VercelRequest, res: VercelResponse) {
     const rawOffset = getParam(req, 'offset');
     const offset = rawOffset ? Number.parseInt(rawOffset, 10) : 0;
 
-    const payload = queryPostalCodes({ q, code, region, limit, offset });
+    const payload = queryPostalCodes({ q, code, county, limit, offset });
 
     if (format === 'csv') {
       const csv = entriesToCsv(payload.results);
