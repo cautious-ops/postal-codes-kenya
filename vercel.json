@@ -35,6 +35,28 @@
       "destination": "/api/postal-page?slug=:slug"
     },
     {
+      "source": "/privacy",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Slackbot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/legal-page?page=privacy"
+    },
+    {
+      "source": "/terms",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Slackbot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/legal-page?page=terms"
+    },
+    {
       "source": "/((?!api/|postal-codes\\.csv|robots\\.txt|sitemap\\.xml|assets/).*)",
       "destination": "/index.html"
     }

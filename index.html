@@ -3,14 +3,14 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Kenya Postal Code Finder – All 647 Codes &amp; Free API</title>
+    <title>Kenya Postal Codes Finder (All 647 Codes) – Tool &amp; API</title>
     <meta
       name="description"
-      content="Look up any Kenya postal code instantly by town, estate, or 5-digit code (00100–90408). Copy codes, browse 10 regions, or use our free JSON/CSV API."
+      content="Find any Kenyan postal code fast—Nairobi 00100, Mombasa, Kisumu, Nakuru &amp; all 647 offices. Faster than static lists, with one-click copy and free API."
     />
     <meta
       name="keywords"
-      content="kenya postal code, postal code finder kenya, nairobi postal code 00100, mombasa postal code, kisumu postal code, eldoret postal code, kenya zip code, kenya postal api"
+      content="postal codes in kenya, kenya postal code finder, nairobi postal code 00100, mombasa postal code, kisumu postal code, eldoret postal code, nakuru postal code, kenya zip code, kenya posta codes list, kenya postal api"
     />
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large" />
     <link
@@ -24,20 +24,20 @@
     />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Kenya Postal Directory" />
-    <meta property="og:title" content="Kenya Postal Code Finder – All 647 Codes &amp; Free API" />
+    <meta property="og:title" content="Kenya Postal Codes Finder (All 647 Codes) – Tool &amp; API" />
     <meta
       property="og:description"
-      content="Look up any Kenya postal code instantly by town, estate, or 5-digit code (00100–90408). Copy codes, browse 10 regions, or use our free JSON/CSV API."
+      content="Find any Kenyan postal code fast—Nairobi 00100, Mombasa, Kisumu, Nakuru &amp; all 647 offices. Faster than static lists, with one-click copy and free API."
     />
     <meta
       property="og:image"
       content="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
     />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Kenya Postal Code Finder – All 647 Codes &amp; Free API" />
+    <meta name="twitter:title" content="Kenya Postal Codes Finder (All 647 Codes) – Tool &amp; API" />
     <meta
       name="twitter:description"
-      content="Instant Kenya postal code lookup for all 647 official post offices plus a free JSON/CSV API and WordPress HTML widget."
+      content="Instant Kenya postal code lookup for all 647 official post offices plus regional prefix guide, WordPress widget, and free JSON/CSV API."
     />
     <meta
       name="twitter:image"
@@ -55,7 +55,7 @@
           "@context": "https://schema.org",
           "@type": "WebApplication",
           "name": "Kenya Postal Directory",
-          "description": "Search all 647 official Kenyan postal codes by town, post office, or 5-digit code with a free public JSON and CSV API.",
+          "description": "Interactive lookup tool for all 647 official Kenyan postal codes (00100–90408) by town, estate, or region with a free public JSON and CSV API.",
           "applicationCategory": "UtilityApplication",
           "operatingSystem": "All",
           "offers": {
@@ -66,6 +66,29 @@
         },
         {
           "@context": "https://schema.org",
+          "@type": "Dataset",
+          "name": "Kenya Official 647 Postal Codes Dataset",
+          "description": "Complete structured directory of all 647 Kenyan postal offices and 5-digit postal codes across all 10 regional zones (00xxx to 90xxx).",
+          "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "spatialCoverage": {
+            "@type": "Place",
+            "name": "Kenya"
+          },
+          "distribution": [
+            {
+              "@type": "DataDownload",
+              "encodingFormat": "application/json",
+              "contentUrl": "/api/lookup?limit=all"
+            },
+            {
+              "@type": "DataDownload",
+              "encodingFormat": "text/csv",
+              "contentUrl": "/api/postal-codes?limit=all&format=csv"
+            }
+          ]
+        },
+        {
+          "@context": "https://schema.org",
           "@type": "FAQPage",
           "mainEntity": [
             {
@@ -73,7 +96,31 @@
               "name": "What is the postal code for Nairobi, Kenya?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "The main postal code for Nairobi GPO is 00100. Other Nairobi areas use 00100–00800 prefixes such as City Square (00200), Westlands (00800), Karen (00502), Eastleigh (00610), and Kilimani / Yaya Towers (00508)."
+                "text": "The main postal code for Nairobi GPO is 00100. Other Nairobi areas use 00100–00800 prefixes such as City Square (00200), Westlands (00800), Karen (00502), Eastleigh (00610), Embakasi (00501), and Yaya Towers (00508)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is Kenya's ZIP code?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Kenya uses 5-digit postal codes rather than US ZIP codes. On international websites asking for a Kenya ZIP code, enter your local 5-digit Kenyan postal code such as 00100 for Nairobi GPO, 80118 for Nyali (Mombasa), 20100 for Nakuru, or 30100 for Eldoret GPO. Do not enter +254, which is the telephone calling code."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "What is the postal code for Mombasa, Kenya?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Mombasa and the Coast region use 80xxx postal codes, including Bamburi (80101), Changamwe (80102), Likoni (80110), Nyali (80118), Malindi (80200), and Ukunda (80400)."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How do you write a Kenyan postal address?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Write the recipient's name on the first line, followed by P.O. Box [Box Number] – [5-Digit Postal Code] on the second line, and the Post Office Town and Kenya on the third line (for example: P.O. Box 12345 – 00100, Nairobi GPO, Kenya)."
               }
             },
             {
@@ -81,12 +128,12 @@
               "name": "How many digits is a Kenyan postal code?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Kenya uses a 5-digit postal code format (00100 to 90408), where the first digit identifies one of Kenya's 10 postal regions."
+                "text": "Every Kenyan postal code uses a 5-digit number from 00100 to 90408, where the first digit identifies one of Kenya's 10 postal regions."
               }
             },
             {
               "@type": "Question",
-              "name": "What are the postal code prefixes across Kenya's regions?",
+              "name": "What are the postal code prefixes across Kenya's 10 regions?",
               "acceptedAnswer": {
                 "@type": "Answer",
                 "text": "0xxxx is Nairobi & Metro, 1xxxx is Central (Nyeri), 2xxxx is South & Central Rift (Nakuru), 3xxxx is North Rift (Eldoret), 4xxxx is Nyanza (Kisumu), 5xxxx is Western (Kakamega), 6xxxx is Upper Eastern (Embu/Meru), 7xxxx is North Eastern (Garissa), 8xxxx is Coast (Mombasa/Nyali), and 9xxxx is Lower Eastern (Machakos/Kitui)."

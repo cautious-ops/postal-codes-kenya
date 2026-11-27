@@ -6,9 +6,15 @@ import { EmbedWidgetGenerator } from './components/EmbedWidgetGenerator.tsx';
 import { MigrationGuide } from './components/MigrationGuide.tsx';
 import { MobileBottomNav } from './components/MobileBottomNav.tsx';
 import { AdSlot } from './components/AdSlot.tsx';
+import { LegalPages, type LegalPageMode } from './components/LegalPages.tsx';
 import { findEntryBySlugOrCode, type PostalEntry } from '../shared/postalService.ts';
 
 type ThemeMode = 'light' | 'dark';
+
+type AppRoute =
+  | { kind: 'home' }
+  | { kind: 'postal'; slug: string }
+  | { kind: 'legal'; page: LegalPageMode };
 
 function getInitialTheme(): ThemeMode {
   if (typeof document !== 'undefined' && document.documentElement.classList.contains('dark')) {
@@ -17,16 +23,28 @@ function getInitialTheme(): ThemeMode {
   return 'light';
 }
 
-function getSlugFromPathname(): string | null {
-  if (typeof window === 'undefined') return null;
-  const match = window.location.pathname.match(/^\/postal-code\/([^/]+)\/?$/);
-  return match ? decodeURIComponent(match[1]) : null;
+function getRouteFromPathname(): AppRoute {
+  if (typeof window === 'undefined') return { kind: 'home' };
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (path === '/privacy' || path === '/privacy-policy') {
+    return { kind: 'legal', page: 'privacy' };
+  }
+  if (path === '/terms' || path === '/terms-of-use') {
+    return { kind: 'legal', page: 'terms' };
+  }
+  const match = path.match(/^\/postal-code\/([^/]+)$/);
+  if (match) {
+    return { kind: 'postal', slug: decodeURIComponent(match[1]) };
+  }
+  return { kind: 'home' };
 }
 
 export default function App() {
   const [apiSelectedCode, setApiSelectedCode] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
-  const [activeSlug, setActiveSlug] = useState<string | null>(getSlugFromPathname);
+  const [route, setRoute] = useState<AppRoute>(getRouteFromPathname);
+
+  const activeSlug = route.kind === 'postal' ? route.slug : null;
 
   useEffect(() => {
     const root = document.documentElement;
@@ -44,24 +62,41 @@ export default function App() {
 
   useEffect(() => {
     function handlePopState() {
-      setActiveSlug(getSlugFromPathname());
+      setRoute(getRouteFromPathname());
     }
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   useEffect(() => {
-    const entry = activeSlug ? findEntryBySlugOrCode(activeSlug) : undefined;
-    const baseTitle = 'Kenya Postal Code Finder – All 647 Codes & Free API';
-    const baseDesc =
-      'Look up any Kenya postal code instantly by town, estate, or 5-digit code (00100–90408). Copy codes, browse 10 regions, or use our free JSON/CSV API.';
+    const origin = window.location.origin;
+    const absoluteLogoUrl = `${origin}/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png`;
 
-    const title = entry
-      ? `${entry.location} Postal Code (${entry.code}) – Kenya Posta Directory`
-      : baseTitle;
-    const description = entry
-      ? `Official Kenya postal code for ${entry.location} (${entry.regionName}) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`
-      : baseDesc;
+    let title = 'Kenya Postal Codes Finder (All 647 Codes) – Tool & API';
+    let description =
+      'Find any Kenyan postal code fast—Nairobi 00100, Mombasa, Kisumu, Nakuru & all 647 offices. Faster than static lists, with one-click copy and free API.';
+    let canonicalUrl = `${origin}/`;
+
+    if (route.kind === 'legal') {
+      if (route.page === 'privacy') {
+        title = 'Privacy Policy – Kenya Postal Directory';
+        description =
+          'Privacy Policy explaining how Kenya Postal Directory handles lookup queries, API access, local preferences, and Google AdSense cookies.';
+        canonicalUrl = `${origin}/privacy`;
+      } else {
+        title = 'Terms of Use – Kenya Postal Directory';
+        description =
+          'Terms of Use governing access to the Kenya Postal Directory lookup tool, free JSON/CSV REST API, and embeddable WordPress widget.';
+        canonicalUrl = `${origin}/terms`;
+      }
+    } else if (route.kind === 'postal') {
+      const entry = findEntryBySlugOrCode(route.slug);
+      if (entry) {
+        title = `${entry.location} Postal Code (${entry.code}) – Kenya Posta Directory`;
+        description = `Official Kenya postal code for ${entry.location} (${entry.regionName}) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`;
+        canonicalUrl = `${origin}/postal-code/${entry.slug}`;
+      }
+    }
 
     document.title = title;
 
@@ -73,12 +108,6 @@ export default function App() {
 
     const ogDesc = document.querySelector('meta[property="og:description"]');
     if (ogDesc) ogDesc.setAttribute('content', description);
-
-    const origin = window.location.origin;
-    const canonicalUrl = entry
-      ? `${origin}/postal-code/${entry.slug}`
-      : `${origin}/`;
-    const absoluteLogoUrl = `${origin}/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png`;
 
     const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogUrl) {
@@ -103,17 +132,36 @@ export default function App() {
       document.head.appendChild(canonicalLink);
     }
     canonicalLink.setAttribute('href', canonicalUrl);
-  }, [activeSlug]);
+  }, [route]);
 
-  function handleSelectSlug(slug: string | null) {
-    setActiveSlug(slug);
-    const nextPath = slug ? `/postal-code/${slug}` : '/';
+  function pushPath(nextPath: string, nextRoute: AppRoute) {
+    setRoute(nextRoute);
     if (window.location.pathname !== nextPath) {
       window.history.pushState({}, '', nextPath);
     }
   }
 
+  function handleSelectSlug(slug: string | null) {
+    if (slug) {
+      pushPath(`/postal-code/${slug}`, { kind: 'postal', slug });
+    } else {
+      pushPath('/', { kind: 'home' });
+    }
+  }
+
+  function handleNavigateLegal(page: LegalPageMode) {
+    pushPath(`/${page}`, { kind: 'legal', page });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   function scrollToApi() {
+    if (route.kind === 'legal') {
+      pushPath('/', { kind: 'home' });
+      window.setTimeout(() => {
+        document.getElementById('api-explorer')?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+      return;
+    }
     document.getElementById('api-explorer')?.scrollIntoView({ behavior: 'smooth' });
   }
 
@@ -129,23 +177,39 @@ export default function App() {
     >
       <TopBar
         onTryApiClick={scrollToApi}
-        onNavigateHome={() => handleSelectSlug(null)}
+        onNavigateHome={() => {
+          pushPath('/', { kind: 'home' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }}
       />
 
       <main className="flex-1">
-        <LookupWorkspace
-          theme={theme}
-          onThemeChange={setTheme}
-          activeSlug={activeSlug}
-          onSelectSlug={handleSelectSlug}
-          onSelectForApi={handleSelectForApi}
-        />
-        <AdSlot placement="lookup-api-break" variant="leaderboard" />
-        <ApiPlayground externalCodeQuery={apiSelectedCode} />
-        <EmbedWidgetGenerator />
-        <AdSlot placement="embed-directory-break" variant="compact" />
-        <MigrationGuide onSelectSlug={handleSelectSlug} />
-        <AdSlot placement="footer-multiplex" variant="multiplex" />
+        {route.kind === 'legal' ? (
+          <LegalPages
+            mode={route.page}
+            onBackHome={() => {
+              pushPath('/', { kind: 'home' });
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+            onSwitchMode={handleNavigateLegal}
+          />
+        ) : (
+          <>
+            <LookupWorkspace
+              theme={theme}
+              onThemeChange={setTheme}
+              activeSlug={activeSlug}
+              onSelectSlug={handleSelectSlug}
+              onSelectForApi={handleSelectForApi}
+            />
+            <AdSlot placement="lookup-api-break" variant="leaderboard" />
+            <ApiPlayground externalCodeQuery={apiSelectedCode} />
+            <EmbedWidgetGenerator />
+            <AdSlot placement="embed-directory-break" variant="compact" />
+            <MigrationGuide onSelectSlug={handleSelectSlug} />
+            <AdSlot placement="footer-multiplex" variant="multiplex" />
+          </>
+        )}
       </main>
 
       <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] pt-8 pb-24 md:pb-8 transition-colors">
@@ -166,7 +230,7 @@ export default function App() {
               </p>
             </div>
           </div>
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
             <a
               href="/postal-codes.csv"
               download
@@ -190,11 +254,31 @@ export default function App() {
             >
               XML Sitemap
             </a>
+            <a
+              href="/privacy"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigateLegal('privacy');
+              }}
+              className="py-2 sm:py-0 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+            >
+              Privacy Policy
+            </a>
+            <a
+              href="/terms"
+              onClick={(e) => {
+                e.preventDefault();
+                handleNavigateLegal('terms');
+              }}
+              className="py-2 sm:py-0 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+            >
+              Terms of Use
+            </a>
           </div>
         </div>
       </footer>
 
-      <MobileBottomNav />
+      {route.kind !== 'legal' && <MobileBottomNav />}
     </div>
   );
 }

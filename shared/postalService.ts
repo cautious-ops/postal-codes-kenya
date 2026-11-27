@@ -160,6 +160,8 @@ export function queryPostalCodes(options: PostalQueryOptions = {}): PostalQueryR
       const locNorm = normalizeSearchText(entry.location);
       const codeNorm = entry.code.toLowerCase();
       const regionNorm = normalizeSearchText(entry.regionName);
+      const regionMeta = REGION_BY_ID.get(entry.regionId);
+      const hubsNorm = regionMeta ? normalizeSearchText(regionMeta.majorHubs) : '';
 
       if (codeNorm === normalizedQ || locNorm === normalizedQ) {
         scored.push({ entry, score: 0 });
@@ -167,7 +169,7 @@ export function queryPostalCodes(options: PostalQueryOptions = {}): PostalQueryR
         scored.push({ entry, score: 1 });
       } else if (locNorm.includes(normalizedQ) || codeNorm.includes(normalizedQ)) {
         scored.push({ entry, score: 2 });
-      } else if (regionNorm.includes(normalizedQ)) {
+      } else if (regionNorm.includes(normalizedQ) || hubsNorm.includes(normalizedQ)) {
         scored.push({ entry, score: 3 });
       }
     }

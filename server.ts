@@ -9,6 +9,7 @@ import {
   queryPostalCodes,
 } from './shared/postalService.ts';
 import {
+  buildLegalHtmlPage,
   buildRobotsTxt,
   buildSeoHtmlPage,
   buildSitemapXml,
@@ -179,6 +180,28 @@ async function createServer() {
     const ua = req.headers['user-agent'] ?? '';
     if (BOT_USER_AGENT_RE.test(ua) || req.query.ssr === '1') {
       const { status, html } = buildSeoHtmlPage(req.params.slug ?? '', getRequestBaseUrl(req));
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(status).send(html);
+      return;
+    }
+    next();
+  });
+
+  app.get(['/privacy', '/privacy-policy'], (req, res, next) => {
+    const ua = req.headers['user-agent'] ?? '';
+    if (BOT_USER_AGENT_RE.test(ua) || req.query.ssr === '1') {
+      const { status, html } = buildLegalHtmlPage('privacy', getRequestBaseUrl(req));
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(status).send(html);
+      return;
+    }
+    next();
+  });
+
+  app.get(['/terms', '/terms-of-use'], (req, res, next) => {
+    const ua = req.headers['user-agent'] ?? '';
+    if (BOT_USER_AGENT_RE.test(ua) || req.query.ssr === '1') {
+      const { status, html } = buildLegalHtmlPage('terms', getRequestBaseUrl(req));
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.status(status).send(html);
       return;
