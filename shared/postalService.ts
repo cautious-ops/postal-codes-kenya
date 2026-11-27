@@ -3,6 +3,7 @@ import { RAW_POSTAL_RECORDS } from './postalData.ts';
 export interface PostalEntry {
   location: string;
   code: string;
+  slug: string;
   regionId: string;
   regionName: string;
   prefix: string;
@@ -61,6 +62,15 @@ function normalizeSearchText(value: string): string {
     .replace(/[\u2018\u2019]/g, "'");
 }
 
+export function slugifyLocation(location: string): string {
+  return location
+    .trim()
+    .toLowerCase()
+    .replace(/[\u2018\u2019']/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export const POSTAL_ENTRIES: readonly PostalEntry[] = RAW_POSTAL_RECORDS.map((record) => {
   const paddedCode = record.code.padStart(5, '0');
   const regionId = paddedCode.charAt(0);
@@ -68,11 +78,41 @@ export const POSTAL_ENTRIES: readonly PostalEntry[] = RAW_POSTAL_RECORDS.map((re
   return {
     location: record.location,
     code: paddedCode,
+    slug: `${paddedCode}-${slugifyLocation(record.location)}`,
     regionId,
     regionName: regionMeta ? regionMeta.name : 'Other',
     prefix: paddedCode.slice(0, 2),
   };
 });
+
+const ENTRY_BY_SLUG = new Map<string, PostalEntry>(
+  POSTAL_ENTRIES.map((entry) => [entry.slug, entry])
+);
+
+export function findEntryBySlugOrCode(rawSlug: string): PostalEntry | undefined {
+  const cleaned = rawSlug.trim().toLowerCase();
+  if (!cleaned) return undefined;
+
+  const exactSlug = ENTRY_BY_SLUG.get(cleaned);
+  if (exactSlug) return exactSlug;
+
+  const codeOnly = cleaned.match(/^(\d{3,5})(?:-|$)/);
+  if (codeOnly) {
+    const padded = codeOnly[1].padStart(5, '0');
+    const byCode = POSTAL_ENTRIES.find((entry) => entry.code === padded);
+    if (byCode) return byCode;
+  }
+
+  return POSTAL_ENTRIES.find(
+    (entry) => slugifyLocation(entry.location) === cleaned
+  );
+}
+
+export function getRelatedEntries(entry: PostalEntry, limit = 8): PostalEntry[] {
+  return POSTAL_ENTRIES.filter(
+    (item) => item.regionId === entry.regionId && item.slug !== entry.slug
+  ).slice(0, limit);
+}
 
 export function getRegionsSummary(): RegionSummary[] {
   return KENYA_REGIONS.map((region) => {

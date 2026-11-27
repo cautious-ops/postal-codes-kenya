@@ -8,12 +8,25 @@ import {
   lookupByExactCode,
   queryPostalCodes,
 } from './shared/postalService.ts';
+import { buildSeoHtmlPage, buildSitemapXml } from './shared/seoRenderer.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const PORT = Number(process.env.PORT) || 3000;
 const isProduction = process.env.NODE_ENV === 'production';
+
+const BOT_USER_AGENT_RE =
+  /(googlebot|bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|whatsapp|slackbot|discordbot)/i;
+
+function getRequestBaseUrl(req: express.Request): string {
+  if (process.env.APP_URL) return process.env.APP_URL.replace(/\/+$/, '');
+  const protoHeader = req.headers['x-forwarded-proto'];
+  const proto = Array.isArray(protoHeader) ? protoHeader[0] : protoHeader ?? req.protocol ?? 'http';
+  const hostHeader = req.headers['x-forwarded-host'] ?? req.headers.host;
+  const host = Array.isArray(hostHeader) ? hostHeader[0] : hostHeader ?? `localhost:${PORT}`;
+  return `${proto}://${host}`;
+}
 
 async function createServer() {
   const app = express();
@@ -27,6 +40,12 @@ async function createServer() {
       return;
     }
     next();
+  });
+
+  app.get('/sitemap.xml', (req, res) => {
+    const xml = buildSitemapXml(getRequestBaseUrl(req));
+    res.setHeader('Content-Type', 'application/xml; charset=utf-8');
+    res.send(xml);
   });
 
   app.get('/api/health', (_req, res) => {
@@ -43,6 +62,33 @@ async function createServer() {
     res.json({
       totalRecords: POSTAL_ENTRIES.length,
       regions,
+    });
+  });
+
+  app.get('/api/lookup', (req, res) => {
+    const q = typeof req.query.q === 'string' ? req.query.q.slice(0, 100) : undefined;
+    const code = typeof req.query.code === 'string' ? req.query.code.slice(0, 10) : undefined;
+    const region = typeof req.query.region === 'string' ? req.query.region.slice(0, 10) : undefined;
+    const format = typeof req.query.format === 'string' ? req.query.format.toLowerCase() : 'json';
+    const rawLimit = typeof req.query.limit === 'string' ? req.query.limit : undefined;
+    const limit = rawLimit === 'all'
+      ? POSTAL_ENTRIES.length
+      : rawLimit
+        ? Number.parseInt(rawLimit, 10)
+        : 20;
+
+    const payload = queryPostalCodes({ q, code, region, limit, offset: 0 });
+
+    if (format === 'csv') {
+      res.setHeader('Content-Type', 'text/csv; charset=utf-8');
+      res.send(entriesToCsv(payload.results));
+      return;
+    }
+
+    res.json({
+      query: q ?? code ?? null,
+      total: payload.total,
+      results: payload.results,
     });
   });
 
@@ -108,6 +154,17 @@ async function createServer() {
       location: matches[0].location,
       matches,
     });
+  });
+
+  app.get('/postal-code/:slug', (req, res, next) => {
+    const ua = req.headers['user-agent'] ?? '';
+    if (BOT_USER_AGENT_RE.test(ua) || req.query.ssr === '1') {
+      const { status, html } = buildSeoHtmlPage(req.params.slug ?? '', getRequestBaseUrl(req));
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.status(status).send(html);
+      return;
+    }
+    next();
   });
 
   if (!isProduction) {

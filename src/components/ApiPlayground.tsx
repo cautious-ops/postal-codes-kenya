@@ -1,20 +1,27 @@
 import { useEffect, useState } from 'react';
 import { Check, Copy, Play } from 'lucide-react';
 
-type EndpointKey = 'search' | 'exact' | 'regions' | 'csv';
+type EndpointKey = 'lookup' | 'exact' | 'regions' | 'csv';
 type SnippetLang = 'curl' | 'javascript' | 'php';
 
 interface ApiPlaygroundProps {
   externalCodeQuery?: string | null;
 }
 
+const API_PRESETS = [
+  { label: 'Find Nairobi', key: 'lookup' as const, q: 'Nairobi', region: 'all', limit: '5' },
+  { label: 'Code 00100', key: 'exact' as const, code: '00100' },
+  { label: 'Coast Offices', key: 'lookup' as const, q: '', region: '8', limit: '10' },
+  { label: 'All 647 JSON', key: 'lookup' as const, q: '', region: 'all', limit: 'all' },
+];
+
 export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
-  const [endpointKey, setEndpointKey] = useState<EndpointKey>('search');
+  const [endpointKey, setEndpointKey] = useState<EndpointKey>('lookup');
   const [qParam, setQParam] = useState('Nairobi');
   const [regionParam, setRegionParam] = useState('all');
-  const [limitParam, setLimitParam] = useState('10');
+  const [limitParam, setLimitParam] = useState('5');
   const [codeParam, setCodeParam] = useState('00100');
-  const [snippetLang, setSnippetLang] = useState<SnippetLang>('curl');
+  const [snippetLang, setSnippetLang] = useState<SnippetLang>('javascript');
 
   const [responseText, setResponseText] = useState<string>('');
   const [httpStatus, setHttpStatus] = useState<number | null>(null);
@@ -27,21 +34,30 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
   const origin =
     typeof window !== 'undefined' ? window.location.origin : 'https://your-app.vercel.app';
 
-  function buildPath(key: EndpointKey): string {
+  function buildPath(
+    key: EndpointKey,
+    overrides?: { q?: string; region?: string; limit?: string; code?: string }
+  ): string {
+    const q = overrides?.q ?? qParam;
+    const region = overrides?.region ?? regionParam;
+    const limit = overrides?.limit ?? limitParam;
+    const code = overrides?.code ?? codeParam;
+
     if (key === 'exact') {
-      const safeCode = codeParam.trim() || '00100';
+      const safeCode = code.trim() || '00100';
       return `/api/postal-codes/${encodeURIComponent(safeCode)}`;
     }
     if (key === 'regions') {
       return '/api/regions';
     }
     const params = new URLSearchParams();
-    if (qParam.trim()) params.set('q', qParam.trim());
-    if (regionParam && regionParam !== 'all') params.set('region', regionParam);
-    if (limitParam.trim()) params.set('limit', limitParam.trim());
+    if (q.trim()) params.set('q', q.trim());
+    if (region && region !== 'all') params.set('region', region);
+    if (limit.trim()) params.set('limit', limit.trim());
     if (key === 'csv') params.set('format', 'csv');
     const qs = params.toString();
-    return qs ? `/api/postal-codes?${qs}` : '/api/postal-codes';
+    const base = key === 'csv' ? '/api/postal-codes' : '/api/lookup';
+    return qs ? `${base}?${qs}` : base;
   }
 
   const activePath = buildPath(endpointKey);
@@ -74,7 +90,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
   }
 
   useEffect(() => {
-    void executeRequest('/api/postal-codes?q=Nairobi&limit=10');
+    void executeRequest('/api/lookup?q=Nairobi&limit=5');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -92,7 +108,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
       return `curl -s "${fullUrl}"`;
     }
     if (snippetLang === 'javascript') {
-      return `const response = await fetch("${fullUrl}");\nconst data = await response.json();\nconsole.log(data);`;
+      return `const res = await fetch("${fullUrl}");\nconst data = await res.json();\nconsole.log(data.results ?? data);`;
     }
     return `<?php\n$json = file_get_contents("${fullUrl}");\n$data = json_decode($json, true);\nprint_r($data);`;
   }
@@ -118,7 +134,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
       className="py-16 border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0D131F] transition-colors"
     >
       <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
           <div>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
               Public REST API · Zero API Keys · CORS Enabled
@@ -128,8 +144,38 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
             </h2>
           </div>
           <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md">
-            Query JSON or CSV directly from your frontend, PHP backend, mobile app, or checkout address form with no authentication required.
+            Call one simple GET URL from JavaScript, PHP, WordPress, or cURL—no registration, rate-limit tokens, or auth headers needed.
           </p>
+        </div>
+
+        <div className="mb-6 flex flex-wrap items-center gap-2 text-xs">
+          <span className="text-slate-500 dark:text-slate-400 font-medium mr-1">
+            One-click examples:
+          </span>
+          {API_PRESETS.map((preset) => (
+            <button
+              key={preset.label}
+              type="button"
+              onClick={() => {
+                setEndpointKey(preset.key);
+                if (preset.key === 'exact' && 'code' in preset) {
+                  setCodeParam(preset.code);
+                  void executeRequest(buildPath('exact', { code: preset.code }));
+                } else {
+                  const q = 'q' in preset ? preset.q : '';
+                  const region = 'region' in preset ? preset.region : 'all';
+                  const limit = 'limit' in preset ? preset.limit : '10';
+                  setQParam(q);
+                  setRegionParam(region);
+                  setLimitParam(limit);
+                  void executeRequest(buildPath('lookup', { q, region, limit }));
+                }
+              }}
+              className="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-semibold transition-colors cursor-pointer whitespace-nowrap"
+            >
+              {preset.label}
+            </button>
+          ))}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -141,8 +187,8 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
               <div className="grid grid-cols-2 gap-2">
                 {(
                   [
-                    { key: 'search', label: 'Search & Filter' },
-                    { key: 'exact', label: 'Lookup by Code' },
+                    { key: 'lookup', label: 'Simple Lookup' },
+                    { key: 'exact', label: 'Exact Code' },
                     { key: 'regions', label: 'List Regions' },
                     { key: 'csv', label: 'CSV Export' },
                   ] as const
@@ -171,14 +217,14 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                 02. Query Parameters
               </span>
 
-              {(endpointKey === 'search' || endpointKey === 'csv') && (
+              {(endpointKey === 'lookup' || endpointKey === 'csv') && (
                 <div className="space-y-3">
                   <div>
                     <label
                       htmlFor="api-q"
                       className="block text-xs text-slate-600 dark:text-slate-400 mb-1"
                     >
-                      q (search town or partial code)
+                      q (search town, region, or partial code)
                     </label>
                     <input
                       id="api-q"
@@ -274,7 +320,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
             <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
               <div className="flex items-center justify-between gap-2 mb-2">
                 <div className="flex items-center gap-1">
-                  {(['curl', 'javascript', 'php'] as const).map((lang) => (
+                  {(['javascript', 'php', 'curl'] as const).map((lang) => (
                     <button
                       key={lang}
                       type="button"

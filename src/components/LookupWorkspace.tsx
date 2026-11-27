@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
+  ArrowLeft,
   ArrowUpRight,
   Check,
   Copy,
@@ -15,7 +16,9 @@ import {
   KENYA_REGIONS,
   POSTAL_ENTRIES,
   entriesToCsv,
+  findEntryBySlugOrCode,
   getRegionsSummary,
+  getRelatedEntries,
   queryPostalCodes,
   type PostalEntry,
 } from '../../shared/postalService.ts';
@@ -26,14 +29,18 @@ type ThemeMode = 'light' | 'dark';
 interface LookupWorkspaceProps {
   theme: ThemeMode;
   onThemeChange: (theme: ThemeMode) => void;
+  activeSlug: string | null;
+  onSelectSlug: (slug: string | null) => void;
   onSelectForApi?: (entry: PostalEntry) => void;
 }
 
-const QUICK_SEARCH_TERMS = ['Nairobi GPO', '00100', 'Nakuru', 'Eldoret GPO', 'Nyali', 'Kisumu'];
+const QUICK_SEARCH_TERMS = ['Nairobi GPO', '00100', 'Nakuru', 'Eldoret GPO', 'Nyali', 'Westlands'];
 
 export function LookupWorkspace({
   theme,
   onThemeChange,
+  activeSlug,
+  onSelectSlug,
   onSelectForApi,
 }: LookupWorkspaceProps) {
   const [query, setQuery] = useState('');
@@ -49,6 +56,16 @@ export function LookupWorkspace({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const regionSummaries = useMemo(() => getRegionsSummary(), []);
+
+  const activeEntry = useMemo(
+    () => (activeSlug ? findEntryBySlugOrCode(activeSlug) ?? null : null),
+    [activeSlug]
+  );
+
+  const relatedEntries = useMemo(
+    () => (activeEntry ? getRelatedEntries(activeEntry, 6) : []),
+    [activeEntry]
+  );
 
   const searchResult = useMemo(() => {
     return queryPostalCodes({
@@ -153,6 +170,7 @@ export function LookupWorkspace({
     setDisplayLimit(36);
     setShowSuggestions(false);
     setActiveSuggestionIdx(-1);
+    if (activeSlug) onSelectSlug(null);
     inputRef.current?.focus();
   }
 
@@ -198,37 +216,114 @@ export function LookupWorkspace({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-8">
-          <div className="lg:col-span-8">
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 text-balance leading-[1.1] mb-3.5">
-              Find any Kenyan postal code in milliseconds.
-            </h1>
-            <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-              Search by town, institution, estate, or 5-digit code. Filter across Kenya’s 10 postal regions, copy codes cleanly, or query the free public JSON and CSV API.
-            </p>
-          </div>
+        {activeEntry ? (
+          <div className="mb-8 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-6 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
+              <button
+                type="button"
+                onClick={() => onSelectSlug(null)}
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white cursor-pointer"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                All {POSTAL_ENTRIES.length} Kenya Postal Codes
+              </button>
+              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                {activeEntry.regionName} · Prefix {activeEntry.prefix}xxx
+              </span>
+            </div>
 
-          <div className="lg:col-span-4 grid grid-cols-3 gap-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-            <div>
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Offices</p>
-              <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
-                {POSTAL_ENTRIES.length}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+              <div>
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 mb-2">
+                  {activeEntry.location} Postal Code
+                </h1>
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl">
+                  The official Kenyan postal code for <strong className="text-slate-900 dark:text-white">{activeEntry.location}</strong> in the {activeEntry.regionName} zone is{' '}
+                  <strong className="font-mono text-[#EA580C] dark:text-[#FB923C]">{activeEntry.code}</strong>. Use this 5-digit code for courier deliveries, shipping forms, and mail addressing in Kenya.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3 shrink-0">
+                <div className="px-5 py-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-center">
+                  <span className="block text-xs text-slate-500 dark:text-slate-400">Postal Code</span>
+                  <span className="font-mono text-3xl font-extrabold text-[#EA580C] dark:text-[#FB923C]">
+                    {activeEntry.code}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => handleCopySingle(activeEntry)}
+                  className="h-12 px-4 rounded-xl bg-[#F38020] hover:bg-[#D96B0F] text-white text-sm font-semibold inline-flex items-center gap-2 transition-colors cursor-pointer whitespace-nowrap"
+                >
+                  {copiedCode === `${activeEntry.location}:${activeEntry.code}` ? (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Copied
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-4 h-4" />
+                      Copy Code
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            {relatedEntries.length > 0 && (
+              <div className="mt-6 pt-4 border-t border-slate-200 dark:border-slate-800 flex flex-wrap items-center gap-2 text-xs">
+                <span className="text-slate-500 dark:text-slate-400 font-medium">
+                  Nearby in {activeEntry.regionName}:
+                </span>
+                {relatedEntries.map((rel) => (
+                  <a
+                    key={rel.slug}
+                    href={`/postal-code/${rel.slug}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      onSelectSlug(rel.slug);
+                    }}
+                    className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-colors whitespace-nowrap"
+                  >
+                    {rel.location} ({rel.code})
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-8">
+            <div className="lg:col-span-8">
+              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 text-balance leading-[1.1] mb-3.5">
+                Find any Kenyan postal code in milliseconds.
+              </h1>
+              <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                Search by town, institution, estate, or 5-digit code. Filter across Kenya’s 10 postal regions, embed our WordPress/HTML checker, or query the free public JSON and CSV API.
               </p>
             </div>
-            <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Regions</p>
-              <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
-                10
-              </p>
-            </div>
-            <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
-              <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Formats</p>
-              <p className="mt-1 font-mono text-sm font-bold text-[#EA580C] dark:text-[#FB923C] leading-7">
-                JSON/CSV
-              </p>
+
+            <div className="lg:col-span-4 grid grid-cols-3 gap-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4">
+              <div>
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Offices</p>
+                <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
+                  {POSTAL_ENTRIES.length}
+                </p>
+              </div>
+              <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Regions</p>
+                <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
+                  10
+                </p>
+              </div>
+              <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
+                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Formats</p>
+                <p className="mt-1 font-mono text-sm font-bold text-[#EA580C] dark:text-[#FB923C] leading-7">
+                  JSON/CSV
+                </p>
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-6 shadow-xs transition-colors">
           <form
@@ -489,9 +584,16 @@ export function LookupWorkspace({
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <h2 className="text-base font-bold text-slate-900 dark:text-slate-100 truncate">
+                        <a
+                          href={`/postal-code/${entry.slug}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            onSelectSlug(entry.slug);
+                          }}
+                          className="block text-base font-bold text-slate-900 dark:text-slate-100 hover:text-[#EA580C] dark:hover:text-[#FB923C] truncate transition-colors"
+                        >
                           {entry.location}
-                        </h2>
+                        </a>
                         <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate">
                           {entry.regionName} · Prefix {entry.prefix}xxx
                         </p>
@@ -565,7 +667,16 @@ export function LookupWorkspace({
                         className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
                       >
                         <td className="py-2.5 px-4 font-semibold text-slate-900 dark:text-slate-100">
-                          {entry.location}
+                          <a
+                            href={`/postal-code/${entry.slug}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              onSelectSlug(entry.slug);
+                            }}
+                            className="hover:text-[#EA580C] dark:hover:text-[#FB923C] transition-colors"
+                          >
+                            {entry.location}
+                          </a>
                         </td>
                         <td className="py-2.5 px-4 text-slate-600 dark:text-slate-400">
                           {entry.regionName}

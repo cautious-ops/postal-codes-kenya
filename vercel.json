@@ -16,7 +16,22 @@
   ],
   "rewrites": [
     {
-      "source": "/((?!api/|postal-codes\\.csv|assets/).*)",
+      "source": "/sitemap.xml",
+      "destination": "/api/sitemap"
+    },
+    {
+      "source": "/postal-code/:slug",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(Googlebot|bingbot|Slurp|DuckDuckBot|Baiduspider|YandexBot|facebookexternalhit|Twitterbot|LinkedInBot|WhatsApp|Slackbot|Discordbot).*"
+        }
+      ],
+      "destination": "/api/postal-page?slug=:slug"
+    },
+    {
+      "source": "/((?!api/|postal-codes\\.csv|robots\\.txt|sitemap\\.xml|assets/).*)",
       "destination": "/index.html"
     }
   ]

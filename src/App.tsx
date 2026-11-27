@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { TopBar } from './components/TopBar.tsx';
 import { LookupWorkspace } from './components/LookupWorkspace.tsx';
 import { ApiPlayground } from './components/ApiPlayground.tsx';
+import { EmbedWidgetGenerator } from './components/EmbedWidgetGenerator.tsx';
 import { MigrationGuide } from './components/MigrationGuide.tsx';
-import type { PostalEntry } from '../shared/postalService.ts';
+import { findEntryBySlugOrCode, type PostalEntry } from '../shared/postalService.ts';
 
 type ThemeMode = 'light' | 'dark';
 
@@ -14,9 +15,16 @@ function getInitialTheme(): ThemeMode {
   return 'light';
 }
 
+function getSlugFromPathname(): string | null {
+  if (typeof window === 'undefined') return null;
+  const match = window.location.pathname.match(/^\/postal-code\/([^/]+)\/?$/);
+  return match ? decodeURIComponent(match[1]) : null;
+}
+
 export default function App() {
   const [apiSelectedCode, setApiSelectedCode] = useState<string | null>(null);
   const [theme, setTheme] = useState<ThemeMode>(getInitialTheme);
+  const [activeSlug, setActiveSlug] = useState<string | null>(getSlugFromPathname);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -32,6 +40,59 @@ export default function App() {
     }
   }, [theme]);
 
+  useEffect(() => {
+    function handlePopState() {
+      setActiveSlug(getSlugFromPathname());
+    }
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  useEffect(() => {
+    const entry = activeSlug ? findEntryBySlugOrCode(activeSlug) : undefined;
+    const baseTitle = 'Kenya Postal Code Finder – All 647 Codes & Free API';
+    const baseDesc =
+      'Look up any Kenya postal code instantly by town, estate, or 5-digit code (00100–90408). Copy codes, browse 10 regions, or use our free JSON/CSV API.';
+
+    const title = entry
+      ? `${entry.location} Postal Code (${entry.code}) – Kenya Posta Directory`
+      : baseTitle;
+    const description = entry
+      ? `Official Kenya postal code for ${entry.location} (${entry.regionName}) is ${entry.code}. Instant lookup, nearby post offices, and free JSON/CSV API.`
+      : baseDesc;
+
+    document.title = title;
+
+    const descMeta = document.querySelector('meta[name="description"]');
+    if (descMeta) descMeta.setAttribute('content', description);
+
+    const ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.setAttribute('content', title);
+
+    const ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.setAttribute('content', description);
+
+    const canonicalUrl = entry
+      ? `${window.location.origin}/postal-code/${entry.slug}`
+      : `${window.location.origin}/`;
+
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', canonicalUrl);
+  }, [activeSlug]);
+
+  function handleSelectSlug(slug: string | null) {
+    setActiveSlug(slug);
+    const nextPath = slug ? `/postal-code/${slug}` : '/';
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({}, '', nextPath);
+    }
+  }
+
   function scrollToApi() {
     document.getElementById('api-explorer')?.scrollIntoView({ behavior: 'smooth' });
   }
@@ -46,22 +107,28 @@ export default function App() {
       id="top"
       className="min-h-screen flex flex-col bg-[#F8FAFC] dark:bg-[#090D16] text-slate-900 dark:text-slate-50 transition-colors"
     >
-      <TopBar onTryApiClick={scrollToApi} />
+      <TopBar
+        onTryApiClick={scrollToApi}
+        onNavigateHome={() => handleSelectSlug(null)}
+      />
 
       <main className="flex-1">
         <LookupWorkspace
           theme={theme}
           onThemeChange={setTheme}
+          activeSlug={activeSlug}
+          onSelectSlug={handleSelectSlug}
           onSelectForApi={handleSelectForApi}
         />
         <ApiPlayground externalCodeQuery={apiSelectedCode} />
-        <MigrationGuide />
+        <EmbedWidgetGenerator />
+        <MigrationGuide onSelectSlug={handleSelectSlug} />
       </main>
 
-      <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0D131F] py-8 transition-colors">
+      <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] py-8 transition-colors">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
           <p>Kenya Postal Code Directory · Open Lookup &amp; Free REST API</p>
-          <div className="flex items-center gap-6">
+          <div className="flex flex-wrap items-center gap-6">
             <a
               href="/postal-codes.csv"
               download
@@ -70,7 +137,7 @@ export default function App() {
               Raw CSV Dataset
             </a>
             <a
-              href="/api/postal-codes?limit=all"
+              href="/api/lookup?limit=all"
               target="_blank"
               rel="noreferrer"
               className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
@@ -78,12 +145,12 @@ export default function App() {
               Full JSON Feed
             </a>
             <a
-              href="/api/regions"
+              href="/sitemap.xml"
               target="_blank"
               rel="noreferrer"
               className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
-              Regions Endpoint
+              XML Sitemap
             </a>
           </div>
         </div>

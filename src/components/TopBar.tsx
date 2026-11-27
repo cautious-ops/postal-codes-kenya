@@ -1,13 +1,20 @@
 interface TopBarProps {
   onTryApiClick: () => void;
+  onNavigateHome?: () => void;
 }
 
-export function TopBar({ onTryApiClick }: TopBarProps) {
+export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
   return (
     <header className="sticky top-0 z-30 bg-[#F8FAFC]/90 dark:bg-[#090D16]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 transition-colors">
       <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
         <a
-          href="#top"
+          href="/"
+          onClick={(e) => {
+            if (onNavigateHome) {
+              e.preventDefault();
+              onNavigateHome();
+            }
+          }}
           className="font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F38020] rounded-sm"
           style={{ fontFamily: 'var(--font-display)' }}
         >
@@ -25,22 +32,22 @@ export function TopBar({ onTryApiClick }: TopBarProps) {
             Lookup
           </a>
           <a
-            href="#regions"
-            className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
-          >
-            Regions
-          </a>
-          <a
             href="#api-explorer"
             className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
             Free API
           </a>
           <a
+            href="#embed-widget"
+            className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
+          >
+            WP / HTML
+          </a>
+          <a
             href="#migration"
             className="hover:text-slate-950 dark:hover:text-white hover:underline underline-offset-4 transition-colors whitespace-nowrap shrink-0"
           >
-            Deploy Guide
+            Directory
           </a>
         </nav>
 
