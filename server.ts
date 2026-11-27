@@ -15,6 +15,12 @@ import {
   buildSitemapXml,
   resolveRequestBaseUrl,
 } from './shared/seoRenderer.ts';
+import {
+  buildEmbedJsPayload,
+  buildStandaloneEmbedHtml,
+  type EmbedLayout,
+  type EmbedTheme,
+} from './shared/embedBuilder.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -52,6 +58,39 @@ async function createServer() {
     const xml = buildSitemapXml(getRequestBaseUrl(req));
     res.setHeader('Content-Type', 'application/xml; charset=utf-8');
     res.send(xml);
+  });
+
+  app.get('/embed', (req, res) => {
+    const rawTheme = (typeof req.query.theme === 'string' ? req.query.theme : '').toLowerCase();
+    const rawLayout = (typeof req.query.layout === 'string' ? req.query.layout : '').toLowerCase();
+    const theme: EmbedTheme = rawTheme === 'dark' ? 'dark' : 'light';
+    const layout: EmbedLayout =
+      rawLayout === 'compact' || rawLayout === 'address' ? rawLayout : 'card';
+
+    const html = buildStandaloneEmbedHtml({
+      apiBaseUrl: getRequestBaseUrl(req),
+      theme,
+      layout,
+      compactFrame: true,
+    });
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+  });
+
+  app.get('/embed.js', (req, res) => {
+    const rawTheme = (typeof req.query.theme === 'string' ? req.query.theme : '').toLowerCase();
+    const rawLayout = (typeof req.query.layout === 'string' ? req.query.layout : '').toLowerCase();
+    const theme: EmbedTheme = rawTheme === 'dark' ? 'dark' : 'light';
+    const layout: EmbedLayout =
+      rawLayout === 'compact' || rawLayout === 'address' ? rawLayout : 'card';
+
+    const js = buildEmbedJsPayload({
+      apiBaseUrl: getRequestBaseUrl(req),
+      theme,
+      layout,
+    });
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.send(js);
   });
 
   app.get('/api/health', (req, res) => {

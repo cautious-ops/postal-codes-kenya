@@ -24,6 +24,14 @@
       "destination": "/api/sitemap"
     },
     {
+      "source": "/embed",
+      "destination": "/api/embed"
+    },
+    {
+      "source": "/embed.js",
+      "destination": "/api/embed-js"
+    },
+    {
       "source": "/postal-code/:slug",
       "has": [
         {
@@ -57,7 +65,7 @@
       "destination": "/api/legal-page?page=terms"
     },
     {
-      "source": "/((?!api/|postal-codes\\.csv|robots\\.txt|sitemap\\.xml|assets/).*)",
+      "source": "/((?!api/|postal-codes\\.csv|robots\\.txt|sitemap\\.xml|embed$|embed\\.js$|assets/).*)",
       "destination": "/index.html"
     }
   ]
