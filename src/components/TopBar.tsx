@@ -5,8 +5,8 @@ interface TopBarProps {
 
 export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
   return (
-    <header className="sticky top-0 z-30 bg-[#F8FAFC]/90 dark:bg-[#090D16]/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 transition-colors">
-      <div className="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+    <header className="md:sticky md:top-0 z-30 bg-[#F8FAFC]/95 dark:bg-[#090D16]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 transition-colors">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 sm:gap-8">
         <a
           href="/"
           onClick={(e) => {
@@ -15,16 +15,16 @@ export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
               onNavigateHome();
             }
           }}
-          className="inline-flex items-center gap-2.5 font-bold text-lg tracking-tight text-slate-900 dark:text-slate-50 whitespace-nowrap shrink-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F38020] rounded-sm"
+          className="inline-flex items-center gap-2.5 font-bold text-base sm:text-lg tracking-tight text-slate-900 dark:text-slate-50 whitespace-nowrap min-w-0 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#F38020] rounded-sm"
           style={{ fontFamily: 'var(--font-display)' }}
         >
           <img
             src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
             alt="Kenya Postal Codes logo"
             referrerPolicy="no-referrer"
-            className="w-11 h-11 rounded-lg object-contain bg-white p-0.5 border border-slate-200 dark:border-slate-700 shrink-0"
+            className="w-9 h-9 sm:w-11 sm:h-11 rounded-lg object-contain bg-white p-0.5 border border-slate-200 dark:border-slate-700 shrink-0"
           />
-          <span>Kenya Postal Directory</span>
+          <span className="truncate">Kenya Postal Directory</span>
         </a>
 
         <nav
@@ -61,7 +61,7 @@ export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
           <button
             type="button"
             onClick={onTryApiClick}
-            className="px-4 py-2 text-sm font-semibold text-white bg-[#F38020] hover:bg-[#D96B0F] active:translate-y-px rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F38020]"
+            className="min-h-[40px] sm:min-h-0 px-3.5 sm:px-4 py-2 text-xs sm:text-sm font-semibold text-white bg-[#F38020] hover:bg-[#D96B0F] active:translate-y-px rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F38020]"
           >
             Explore API
           </button>

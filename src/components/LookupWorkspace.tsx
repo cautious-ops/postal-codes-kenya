@@ -175,11 +175,11 @@ export function LookupWorkspace({
   }
 
   return (
-    <section id="lookup" className="pt-8 pb-16">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-          <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
-            Kenya Posta Directory · <span className="tabular-nums">{POSTAL_ENTRIES.length}</span> Official Offices · Free Open API
+    <section id="lookup" className="pt-4 pb-12 sm:pt-8 sm:pb-16">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="flex flex-wrap items-center justify-between gap-3 mb-4 sm:mb-6">
+          <p className="text-xs sm:text-sm font-medium text-slate-500 dark:text-slate-400">
+            Kenya Posta Directory · <span className="tabular-nums">{POSTAL_ENTRIES.length}</span> Offices · Free API
           </p>
 
           <div
@@ -191,7 +191,7 @@ export function LookupWorkspace({
               type="button"
               onClick={() => onThemeChange('light')}
               aria-pressed={theme === 'light'}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-0 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                 theme === 'light'
                   ? 'bg-slate-900 text-white'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -204,7 +204,7 @@ export function LookupWorkspace({
               type="button"
               onClick={() => onThemeChange('dark')}
               aria-pressed={theme === 'dark'}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+              className={`inline-flex items-center gap-1.5 min-h-[36px] sm:min-h-0 px-3 py-1.5 text-xs font-semibold rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                 theme === 'dark'
                   ? 'bg-[#F38020] text-white'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -292,17 +292,27 @@ export function LookupWorkspace({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-8 items-stretch mb-5 sm:mb-8">
             <div className="lg:col-span-8 flex flex-col justify-center">
-              <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 text-balance leading-[1.1] mb-3.5">
-                Find any Kenyan postal code in milliseconds.
-              </h1>
-              <p className="text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
-                Search by town, institution, estate, or 5-digit code. Filter across Kenya’s 10 postal regions, embed our WordPress/HTML checker, or query the free public JSON and CSV API.
-              </p>
+              <div className="flex items-start gap-3.5 lg:block">
+                <img
+                  src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
+                  alt="Kenya Postal Codes logo"
+                  referrerPolicy="no-referrer"
+                  className="lg:hidden w-16 h-16 rounded-xl object-contain bg-white p-1 border border-slate-200 dark:border-slate-700 shrink-0 mt-0.5"
+                />
+                <div className="min-w-0">
+                  <h1 className="text-2xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 text-balance leading-[1.12] mb-2 sm:mb-3.5">
+                    Find any Kenyan postal code in milliseconds.
+                  </h1>
+                  <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl">
+                    Search by town, institution, or 5-digit code. Filter 10 regions, copy codes, or call the free JSON/CSV API.
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="lg:col-span-4 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between">
+            <div className="hidden lg:flex lg:col-span-4 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex-col justify-between">
               <div className="bg-white px-6 py-4 flex items-center justify-center border-b border-slate-100 dark:border-slate-800">
                 <img
                   src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
@@ -375,7 +385,7 @@ export function LookupWorkspace({
                   type="button"
                   onClick={handleClear}
                   aria-label="Clear search query"
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors cursor-pointer"
+                  className="absolute right-1 top-1/2 -translate-y-1/2 w-11 h-11 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-200/70 dark:hover:bg-slate-800 transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -393,7 +403,7 @@ export function LookupWorkspace({
                         <button
                           type="button"
                           onClick={() => handleSuggestionPick(item)}
-                          className={`w-full px-4 py-2.5 flex items-center justify-between gap-4 text-left transition-colors cursor-pointer ${
+                          className={`w-full min-h-[44px] px-4 py-2.5 flex items-center justify-between gap-4 text-left transition-colors cursor-pointer ${
                             isActive
                               ? 'bg-orange-50 dark:bg-orange-500/15'
                               : 'hover:bg-slate-50 dark:hover:bg-slate-800/70'
@@ -419,7 +429,7 @@ export function LookupWorkspace({
             <div className="flex items-center gap-2 shrink-0">
               <button
                 type="submit"
-                className="h-12 px-5 bg-[#F38020] hover:bg-[#D96B0F] text-white font-semibold text-sm rounded-xl transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F38020]"
+                className="flex-1 sm:flex-initial h-12 px-5 bg-[#F38020] hover:bg-[#D96B0F] text-white font-semibold text-sm rounded-xl transition-colors whitespace-nowrap shrink-0 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#F38020]"
               >
                 Search Codes
               </button>
@@ -435,8 +445,8 @@ export function LookupWorkspace({
             </div>
           </form>
 
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs">
-            <span className="text-slate-500 dark:text-slate-400 font-medium">Quick try:</span>
+          <div className="mt-3 flex flex-nowrap overflow-x-auto sm:flex-wrap items-center gap-2 text-xs no-scrollbar pb-1">
+            <span className="text-slate-500 dark:text-slate-400 font-medium shrink-0">Quick try:</span>
             {QUICK_SEARCH_TERMS.map((term) => (
               <button
                 key={term}
@@ -447,15 +457,19 @@ export function LookupWorkspace({
                   setDisplayLimit(36);
                   setShowSuggestions(false);
                 }}
-                className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-colors cursor-pointer whitespace-nowrap"
+                className="min-h-[38px] sm:min-h-0 px-3 py-1.5 sm:px-2.5 sm:py-1 rounded-md bg-slate-100 dark:bg-slate-800/80 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 font-medium transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 {term}
               </button>
             ))}
           </div>
 
-          <div id="regions" className="mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <div className="flex flex-wrap items-center gap-1.5" role="tablist" aria-label="Filter by postal region">
+          <div id="regions" className="mt-4 sm:mt-5 pt-4 border-t border-slate-200 dark:border-slate-800">
+            <div
+              className="flex flex-nowrap overflow-x-auto sm:flex-wrap items-center gap-2 sm:gap-1.5 no-scrollbar pb-1"
+              role="tablist"
+              aria-label="Filter by postal region"
+            >
               <button
                 type="button"
                 role="tab"
@@ -464,7 +478,7 @@ export function LookupWorkspace({
                   setSelectedRegion('all');
                   setDisplayLimit(36);
                 }}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                className={`min-h-[42px] sm:min-h-0 px-3.5 py-2 sm:px-3 sm:py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                   selectedRegion === 'all'
                     ? 'bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900'
                     : 'bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800'
@@ -484,7 +498,7 @@ export function LookupWorkspace({
                       setSelectedRegion(region.id);
                       setDisplayLimit(60);
                     }}
-                    className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                    className={`min-h-[42px] sm:min-h-0 px-3.5 py-2 sm:px-3 sm:py-1.5 text-xs font-medium rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                       active
                         ? 'bg-[#F38020] text-white font-semibold'
                         : 'bg-slate-100 dark:bg-slate-800/70 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/80 dark:hover:bg-slate-800'
@@ -517,7 +531,7 @@ export function LookupWorkspace({
                   type="button"
                   onClick={() => setViewMode('cards')}
                   aria-label="Card grid view"
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 min-h-[38px] sm:min-h-0 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                     viewMode === 'cards'
                       ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -530,7 +544,7 @@ export function LookupWorkspace({
                   type="button"
                   onClick={() => setViewMode('table')}
                   aria-label="Compact table view"
-                  className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 min-h-[38px] sm:min-h-0 px-2.5 py-1.5 text-xs font-medium rounded-md transition-colors whitespace-nowrap shrink-0 cursor-pointer ${
                     viewMode === 'table'
                       ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs'
                       : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
@@ -545,7 +559,7 @@ export function LookupWorkspace({
                 type="button"
                 onClick={handleCopyAll}
                 disabled={searchResult.total === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors disabled:opacity-40 whitespace-nowrap shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[40px] sm:min-h-0 px-3 py-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors disabled:opacity-40 whitespace-nowrap shrink-0 cursor-pointer"
               >
                 {copiedAll ? (
                   <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
@@ -559,7 +573,7 @@ export function LookupWorkspace({
                 type="button"
                 onClick={handleDownloadCsv}
                 disabled={searchResult.total === 0}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors disabled:opacity-40 whitespace-nowrap shrink-0 cursor-pointer"
+                className="inline-flex items-center gap-1.5 min-h-[40px] sm:min-h-0 px-3 py-1.5 text-xs font-medium text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 rounded-lg transition-colors disabled:opacity-40 whitespace-nowrap shrink-0 cursor-pointer"
               >
                 <Download className="w-3.5 h-3.5" />
                 Download CSV
@@ -578,7 +592,7 @@ export function LookupWorkspace({
               <button
                 type="button"
                 onClick={handleClear}
-                className="px-4 py-2 text-sm font-medium text-white bg-[#F38020] hover:bg-[#D96B0F] rounded-lg transition-colors cursor-pointer"
+                className="min-h-[44px] px-4 py-2 text-sm font-medium text-white bg-[#F38020] hover:bg-[#D96B0F] rounded-lg transition-colors cursor-pointer"
               >
                 Show All {POSTAL_ENTRIES.length} Offices
               </button>
@@ -613,7 +627,7 @@ export function LookupWorkspace({
                         type="button"
                         onClick={() => onSelectForApi?.(entry)}
                         title="Test this code in the API Explorer"
-                        className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-[#EA580C] dark:hover:text-[#FB923C] transition-colors shrink-0 cursor-pointer"
+                        className="inline-flex items-center gap-1 min-h-[36px] sm:min-h-0 px-1.5 text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-[#EA580C] dark:hover:text-[#FB923C] transition-colors shrink-0 cursor-pointer"
                       >
                         API
                         <ArrowUpRight className="w-3.5 h-3.5" />
@@ -634,7 +648,7 @@ export function LookupWorkspace({
                         type="button"
                         onClick={() => handleCopySingle(entry)}
                         aria-label={`Copy postal code ${entry.code} for ${entry.location}`}
-                        className={`h-8 px-3 rounded-lg text-xs font-semibold border transition-colors shrink-0 inline-flex items-center gap-1.5 cursor-pointer ${
+                        className={`min-h-[44px] sm:min-h-0 sm:h-8 px-4 sm:px-3 rounded-lg text-xs font-semibold border transition-colors shrink-0 inline-flex items-center gap-1.5 cursor-pointer ${
                           isCopied
                             ? 'bg-emerald-50 dark:bg-emerald-500/15 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-300'
                             : 'bg-white dark:bg-[#111827] border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 hover:border-[#F38020] dark:hover:border-[#FB923C] hover:text-[#EA580C] dark:hover:text-[#FB923C]'

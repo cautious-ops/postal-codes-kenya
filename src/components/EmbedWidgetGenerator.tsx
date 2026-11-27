@@ -161,9 +161,9 @@ ${wordpressSnippet}
   return (
     <section
       id="embed-widget"
-      className="py-16 border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] transition-colors"
+      className="py-12 sm:py-16 border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] transition-colors"
     >
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
           <div>
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
@@ -179,8 +179,8 @@ ${wordpressSnippet}
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          <div className="lg:col-span-5 space-y-4">
-            <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-5 space-y-4">
+          <div className="lg:col-span-5 min-w-0 space-y-4">
+            <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl p-4 sm:p-5 space-y-4">
               <div>
                 <label
                   htmlFor="embed-base-url"
@@ -194,7 +194,7 @@ ${wordpressSnippet}
                   value={apiBaseUrl}
                   onChange={(e) => setApiBaseUrl(e.target.value)}
                   placeholder="https://your-project.vercel.app"
-                  className="w-full h-10 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                  className="w-full h-11 sm:h-10 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                 />
                 <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                   Set this to your Vercel domain once deployed so the pasted widget fetches live codes.
@@ -212,7 +212,7 @@ ${wordpressSnippet}
                         key={mode}
                         type="button"
                         onClick={() => setWidgetTheme(mode)}
-                        className={`px-3 py-1 text-xs font-semibold rounded-md capitalize transition-colors cursor-pointer ${
+                        className={`min-h-[36px] sm:min-h-0 px-3 py-1 text-xs font-semibold rounded-md capitalize transition-colors cursor-pointer ${
                           widgetTheme === mode
                             ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs'
                             : 'text-slate-600 dark:text-slate-400'
@@ -232,7 +232,7 @@ ${wordpressSnippet}
                     <button
                       type="button"
                       onClick={() => setSnippetMode('wordpress')}
-                      className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap ${
+                      className={`min-h-[36px] sm:min-h-0 px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap ${
                         snippetMode === 'wordpress'
                           ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs'
                           : 'text-slate-600 dark:text-slate-400'
@@ -243,7 +243,7 @@ ${wordpressSnippet}
                     <button
                       type="button"
                       onClick={() => setSnippetMode('standalone')}
-                      className={`px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap ${
+                      className={`min-h-[36px] sm:min-h-0 px-3 py-1 text-xs font-semibold rounded-md transition-colors cursor-pointer whitespace-nowrap ${
                         snippetMode === 'standalone'
                           ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 shadow-xs'
                           : 'text-slate-600 dark:text-slate-400'
@@ -257,7 +257,7 @@ ${wordpressSnippet}
             </div>
 
             <div
-              className={`border rounded-2xl p-5 transition-colors ${
+              className={`border rounded-2xl p-4 sm:p-5 transition-colors ${
                 widgetTheme === 'dark'
                   ? 'bg-[#0F172A] border-slate-800 text-slate-50'
                   : 'bg-white border-slate-200 text-slate-900'
@@ -284,7 +284,7 @@ ${wordpressSnippet}
                   onChange={(e) => setPreviewQuery(e.target.value)}
                   placeholder="Try Nairobi, 00100, Nakuru..."
                   aria-label="Preview widget search"
-                  className={`w-full h-10 pl-9 pr-3 rounded-lg text-sm border focus:border-[#F38020] focus:outline-none ${
+                  className={`w-full h-11 sm:h-10 pl-9 pr-3 rounded-lg text-base sm:text-sm border focus:border-[#F38020] focus:outline-none ${
                     widgetTheme === 'dark'
                       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500'
                       : 'bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400'
@@ -328,7 +328,7 @@ ${wordpressSnippet}
                         <button
                           type="button"
                           onClick={() => void handlePreviewCopy(row.code)}
-                          className={`px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer ${
+                          className={`min-h-[36px] sm:min-h-0 px-2.5 py-1 text-xs font-semibold rounded-md border cursor-pointer ${
                             widgetTheme === 'dark'
                               ? 'bg-slate-900 border-slate-700 text-slate-200'
                               : 'bg-white border-slate-200 text-slate-700'
@@ -344,11 +344,11 @@ ${wordpressSnippet}
             </div>
           </div>
 
-          <div className="lg:col-span-7 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-[#090D16] text-slate-100">
+          <div className="lg:col-span-7 min-w-0 border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden bg-[#090D16] text-slate-100">
             <div className="px-4 py-3 bg-[#111827] border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs font-mono text-slate-300">
-                <Code2 className="w-4 h-4 text-[#FB923C]" />
-                <span>
+              <div className="flex items-center gap-2 text-xs font-mono text-slate-300 min-w-0">
+                <Code2 className="w-4 h-4 text-[#FB923C] shrink-0" />
+                <span className="truncate">
                   {snippetMode === 'wordpress'
                     ? 'wordpress-custom-html-block.html'
                     : 'kenya-postal-checker.html'}
@@ -359,7 +359,7 @@ ${wordpressSnippet}
                 <button
                   type="button"
                   onClick={handleDownloadHtml}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-100 transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 min-h-[40px] sm:min-h-0 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-100 transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <Download className="w-3.5 h-3.5" />
                   Download .html
@@ -367,7 +367,7 @@ ${wordpressSnippet}
                 <button
                   type="button"
                   onClick={() => void handleCopyCode()}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#F38020] hover:bg-[#D96B0F] text-xs font-semibold text-white transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 min-h-[40px] sm:min-h-0 px-3 py-1.5 rounded-lg bg-[#F38020] hover:bg-[#D96B0F] text-xs font-semibold text-white transition-colors cursor-pointer whitespace-nowrap"
                 >
                   {copiedHtml ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
                   {copiedHtml ? 'Copied HTML' : 'Copy HTML'}
@@ -375,7 +375,7 @@ ${wordpressSnippet}
               </div>
             </div>
 
-            <div className="p-4 max-h-[420px] overflow-auto">
+            <div className="p-4 max-h-[380px] sm:max-h-[420px] overflow-auto">
               <pre className="text-xs font-mono leading-relaxed text-slate-200 whitespace-pre">
                 <code>{activeCode}</code>
               </pre>

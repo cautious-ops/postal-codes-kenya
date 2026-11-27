@@ -15,12 +15,17 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     color-scheme: light;
+    overflow-x: clip;
   }
 
   html.dark {
     background-color: #090d16;
     color: #f8fafc;
     color-scheme: dark;
+  }
+
+  body {
+    overflow-x: clip;
   }
 
   h1, h2, h3, h4 {
@@ -39,6 +44,15 @@
 
 .text-balance {
   text-wrap: balance;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {

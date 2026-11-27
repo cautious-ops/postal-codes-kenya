@@ -4,6 +4,7 @@ import { LookupWorkspace } from './components/LookupWorkspace.tsx';
 import { ApiPlayground } from './components/ApiPlayground.tsx';
 import { EmbedWidgetGenerator } from './components/EmbedWidgetGenerator.tsx';
 import { MigrationGuide } from './components/MigrationGuide.tsx';
+import { MobileBottomNav } from './components/MobileBottomNav.tsx';
 import { findEntryBySlugOrCode, type PostalEntry } from '../shared/postalService.ts';
 
 type ThemeMode = 'light' | 'dark';
@@ -125,8 +126,8 @@ export default function App() {
         <MigrationGuide onSelectSlug={handleSelectSlug} />
       </main>
 
-      <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] py-8 transition-colors">
-        <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
+      <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] pt-8 pb-24 md:pb-8 transition-colors">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
           <div className="flex items-center gap-3.5">
             <img
               src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
@@ -147,7 +148,7 @@ export default function App() {
             <a
               href="/postal-codes.csv"
               download
-              className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+              className="py-2 sm:py-0 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
               Raw CSV Dataset
             </a>
@@ -155,7 +156,7 @@ export default function App() {
               href="/api/lookup?limit=all"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+              className="py-2 sm:py-0 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
               Full JSON Feed
             </a>
@@ -163,13 +164,15 @@ export default function App() {
               href="/sitemap.xml"
               target="_blank"
               rel="noreferrer"
-              className="hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+              className="py-2 sm:py-0 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
             >
               XML Sitemap
             </a>
           </div>
         </div>
       </footer>
+
+      <MobileBottomNav />
     </div>
   );
 }

@@ -40,9 +40,9 @@ export function MigrationGuide({ onSelectSlug }: MigrationGuideProps) {
   return (
     <section
       id="migration"
-      className="py-16 border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0D131F] transition-colors"
+      className="py-12 sm:py-16 border-t border-slate-200 dark:border-slate-800/80 bg-white dark:bg-[#0D131F] transition-colors"
     >
-      <div className="max-w-6xl mx-auto px-6 space-y-12">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 space-y-10 sm:space-y-12">
         <div>
           <div className="max-w-2xl mb-6">
             <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-1.5">
