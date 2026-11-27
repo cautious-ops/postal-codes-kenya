@@ -5,6 +5,7 @@ import { ApiPlayground } from './components/ApiPlayground.tsx';
 import { EmbedWidgetGenerator } from './components/EmbedWidgetGenerator.tsx';
 import { MigrationGuide } from './components/MigrationGuide.tsx';
 import { MobileBottomNav } from './components/MobileBottomNav.tsx';
+import { AdSlot } from './components/AdSlot.tsx';
 import { findEntryBySlugOrCode, type PostalEntry } from '../shared/postalService.ts';
 
 type ThemeMode = 'light' | 'dark';
@@ -139,9 +140,12 @@ export default function App() {
           onSelectSlug={handleSelectSlug}
           onSelectForApi={handleSelectForApi}
         />
+        <AdSlot placement="lookup-api-break" variant="leaderboard" />
         <ApiPlayground externalCodeQuery={apiSelectedCode} />
         <EmbedWidgetGenerator />
+        <AdSlot placement="embed-directory-break" variant="compact" />
         <MigrationGuide onSelectSlug={handleSelectSlug} />
+        <AdSlot placement="footer-multiplex" variant="multiplex" />
       </main>
 
       <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] pt-8 pb-24 md:pb-8 transition-colors">
