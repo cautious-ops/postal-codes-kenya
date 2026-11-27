@@ -56,7 +56,7 @@ export function EmbedWidgetGenerator({ onSelectSlug }: EmbedWidgetGeneratorProps
   .kpc-title{margin:0 0 4px;font-size:18px;font-weight:700;color:${text}}
   .kpc-sub{margin:0;font-size:13px;color:${muted}}
   .kpc-form{display:flex;gap:8px;margin-bottom:12px}
-  .kpc-input{flex:1;padding:10px 14px;font-size:14px;border:1px solid ${border};border-radius:10px;background:${surface};color:${text};outline:none}
+  .kpc-input{flex:1;min-width:0;padding:10px 14px;font-size:16px;border:1px solid ${border};border-radius:10px;background:${surface};color:${text};outline:none}
   .kpc-input:focus{border-color:#f38020}
   .kpc-clear{padding:0 14px;font-size:13px;font-weight:600;border:1px solid ${border};border-radius:10px;background:${surface};color:${text};cursor:pointer}
   .kpc-results{display:flex;flex-direction:column;gap:8px}
@@ -117,7 +117,7 @@ export function EmbedWidgetGenerator({ onSelectSlug }: EmbedWidgetGeneratorProps
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Kenya Postal Code Checker</title>
   <style>
     body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:${pageBg};box-sizing:border-box}
@@ -210,7 +210,7 @@ ${wordpressSnippet}
                   value={apiBaseUrl}
                   onChange={(e) => setApiBaseUrl(e.target.value)}
                   placeholder={defaultOrigin}
-                  className="w-full h-11 sm:h-10 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                  className="w-full h-11 px-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                 />
                 <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                   Automatically uses this installation’s live domain so pasted WordPress and HTML snippets work immediately.
@@ -300,7 +300,7 @@ ${wordpressSnippet}
                   onChange={(e) => setPreviewQuery(e.target.value)}
                   placeholder="Try Nairobi, 00100, Nakuru..."
                   aria-label="Preview widget search"
-                  className={`w-full h-11 sm:h-10 pl-9 pr-10 rounded-lg text-base sm:text-sm border focus:border-[#F38020] focus:outline-none ${
+                  className={`w-full h-11 pl-9 pr-10 rounded-lg text-base border focus:border-[#F38020] focus:outline-none ${
                     widgetTheme === 'dark'
                       ? 'bg-slate-800 border-slate-700 text-slate-100 placeholder:text-slate-500'
                       : 'bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400'

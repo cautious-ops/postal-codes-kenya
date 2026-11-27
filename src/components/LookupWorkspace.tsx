@@ -361,8 +361,8 @@ export function LookupWorkspace({
               </div>
 
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div>
-                  <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 mb-2">
+                <div className="min-w-0">
+                  <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 mb-2">
                     {activeEntry.location} Postal Code
                   </h1>
                   <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-2xl">
@@ -371,7 +371,7 @@ export function LookupWorkspace({
                   </p>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3 shrink-0">
+                <div className="flex flex-wrap items-center gap-3 min-w-0 shrink-0">
                   <div className="px-5 py-3 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-center">
                     <span className="block text-xs text-slate-500 dark:text-slate-400">Postal Code</span>
                     <span className="font-mono text-3xl font-extrabold text-[#EA580C] dark:text-[#FB923C]">

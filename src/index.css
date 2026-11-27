@@ -14,6 +14,9 @@
     color: #0f172a;
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    touch-action: manipulation;
     color-scheme: light;
     overflow-x: clip;
   }
@@ -26,6 +29,11 @@
 
   body {
     overflow-x: clip;
+    touch-action: manipulation;
+  }
+
+  input, textarea, select {
+    font-size: 16px;
   }
 
   h1, h2, h3, h4 {

@@ -231,7 +231,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
         <div className="bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden shadow-xs">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Left Column: Simple Inputs */}
-            <div className="lg:col-span-6 p-5 sm:p-6 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800">
+            <div className="lg:col-span-6 min-w-0 p-4 sm:p-6 space-y-4 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-slate-800">
               <div>
                 <label
                   htmlFor="letter-recipient-name"
@@ -245,7 +245,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                   value={recipientName}
                   onChange={(e) => setRecipientName(e.target.value)}
                   placeholder="e.g. Wanjiku Kamau or Rift Valley Logistics Ltd"
-                  className="w-full h-11 px-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
+                  className="w-full h-11 px-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
                 />
               </div>
 
@@ -262,7 +262,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                   value={postalAddress}
                   onChange={(e) => setPostalAddress(e.target.value)}
                   placeholder="e.g. P.O. Box 12345, 12345, or P.O. Box 420 - 80100"
-                  className="w-full h-11 px-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
+                  className="w-full h-11 px-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-base text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
                 />
                 <p className="mt-1.5 text-xs text-slate-500 dark:text-slate-400">
                   {parsed.detectedFromInput ? (
@@ -308,7 +308,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                       setShowOfficeDropdown(true);
                     }}
                     placeholder="Search post office town or 5-digit code..."
-                    className="w-full h-11 pl-10 pr-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
+                    className="w-full h-11 pl-10 pr-3.5 bg-slate-50 dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-xl text-base font-medium text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:bg-white dark:focus:bg-[#090D16] focus:border-[#F38020] focus:outline-none focus:ring-2 focus:ring-[#F38020]/25 transition-colors"
                   />
                 </div>
 
@@ -387,7 +387,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
             </div>
 
             {/* Right Column: Live Preformatted Output */}
-            <div className="lg:col-span-6 p-5 sm:p-6 bg-slate-50/60 dark:bg-[#0B0F17] flex flex-col justify-between gap-5">
+            <div className="lg:col-span-6 min-w-0 p-4 sm:p-6 bg-slate-50/60 dark:bg-[#0B0F17] flex flex-col justify-between gap-5">
               <div>
                 <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                   <div className="inline-flex items-center gap-2 text-xs font-semibold text-slate-700 dark:text-slate-200">
@@ -403,7 +403,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
 
                 <div
                   aria-live="polite"
-                  className="p-5 sm:p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl min-h-[144px] flex items-center"
+                  className="p-4 sm:p-6 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl min-h-[144px] flex items-center"
                 >
                   <pre
                     className={`w-full whitespace-pre-wrap break-words font-mono text-sm sm:text-base leading-relaxed ${
@@ -417,7 +417,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                 </div>
               </div>
 
-              <div className="flex flex-wrap items-center justify-between gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-2 border-t border-slate-200 dark:border-slate-800">
                 <div className="flex items-center gap-2">
                   {!hasUserInput ? (
                     <button
@@ -442,7 +442,7 @@ export function AddressFormatter({ activeEntry }: AddressFormatterProps) {
                 <button
                   type="button"
                   onClick={handleCopyFormatted}
-                  className={`min-h-[44px] sm:min-h-[40px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
+                  className={`w-full sm:w-auto justify-center min-h-[44px] sm:min-h-[40px] px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 transition-colors whitespace-nowrap cursor-pointer ${
                     copied
                       ? 'bg-emerald-600 text-white'
                       : 'bg-[#F38020] hover:bg-[#D96B0F] text-white'

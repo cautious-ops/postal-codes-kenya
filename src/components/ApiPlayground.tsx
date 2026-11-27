@@ -469,7 +469,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                       value={qParam}
                       onChange={(e) => setQParam(e.target.value)}
                       placeholder="e.g. Nairobi, 40100"
-                      className="w-full h-11 sm:h-10 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                      className="w-full h-11 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -484,7 +484,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                         id="api-region"
                         value={regionParam}
                         onChange={(e) => setRegionParam(e.target.value)}
-                        className="w-full h-11 sm:h-10 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                        className="w-full h-11 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                       >
                         <option value="all">all</option>
                         <option value="0">0 · Nairobi &amp; Metro</option>
@@ -511,7 +511,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                         type="text"
                         value={limitParam}
                         onChange={(e) => setLimitParam(e.target.value)}
-                        className="w-full h-11 sm:h-10 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                        className="w-full h-11 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                       />
                     </div>
                   </div>
@@ -533,7 +533,7 @@ export function ApiPlayground({ externalCodeQuery }: ApiPlaygroundProps) {
                     value={codeParam}
                     onChange={(e) => setCodeParam(e.target.value)}
                     placeholder="00100"
-                    className="w-full h-11 sm:h-10 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base sm:text-sm font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
+                    className="w-full h-11 px-3 bg-white dark:bg-[#0B0F17] border border-slate-200 dark:border-slate-700 rounded-lg text-base font-mono text-slate-900 dark:text-slate-100 focus:border-[#F38020] focus:outline-none"
                   />
                 </div>
               )}

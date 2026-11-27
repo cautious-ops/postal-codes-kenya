@@ -59,59 +59,59 @@ export function MobileBottomNav() {
           }`}
         >
           <Search className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Lookup</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Lookup</span>
         </button>
 
         <button
           type="button"
           onClick={() => navigate('address', 'letter-address')}
-          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] px-0.5 transition-colors cursor-pointer ${
             activeTab === 'address'
               ? 'text-[#EA580C] dark:text-[#FB923C]'
               : 'text-slate-500 dark:text-slate-400'
           }`}
         >
           <Mail className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Address</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Address</span>
         </button>
 
         <button
           type="button"
           onClick={() => navigate('api', 'api-explorer')}
-          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] px-0.5 transition-colors cursor-pointer ${
             activeTab === 'api'
               ? 'text-[#EA580C] dark:text-[#FB923C]'
               : 'text-slate-500 dark:text-slate-400'
           }`}
         >
           <Terminal className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Free API</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">API</span>
         </button>
 
         <button
           type="button"
           onClick={() => navigate('embed', 'embed-widget')}
-          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] px-0.5 transition-colors cursor-pointer ${
             activeTab === 'embed'
               ? 'text-[#EA580C] dark:text-[#FB923C]'
               : 'text-slate-500 dark:text-slate-400'
           }`}
         >
           <Code2 className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">WP / HTML</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Embed</span>
         </button>
 
         <button
           type="button"
           onClick={() => navigate('directory', 'migration')}
-          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] transition-colors cursor-pointer ${
+          className={`flex flex-col items-center justify-center gap-0.5 min-h-[44px] px-0.5 transition-colors cursor-pointer ${
             activeTab === 'directory'
               ? 'text-[#EA580C] dark:text-[#FB923C]'
               : 'text-slate-500 dark:text-slate-400'
           }`}
         >
           <BookOpen className="w-5 h-5" />
-          <span className="text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Regions</span>
+          <span className="text-[10px] sm:text-[11px] font-semibold tracking-tight leading-none whitespace-nowrap">Regions</span>
         </button>
       </div>
     </nav>

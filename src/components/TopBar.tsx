@@ -6,7 +6,7 @@ interface TopBarProps {
 export function TopBar({ onTryApiClick, onNavigateHome }: TopBarProps) {
   return (
     <header className="md:sticky md:top-0 z-30 bg-[#F8FAFC]/95 dark:bg-[#090D16]/95 backdrop-blur-md border-b border-slate-200 dark:border-slate-800/80 transition-colors">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-4 sm:gap-8">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-8">
         <a
           href="/"
           onClick={(e) => {
