@@ -127,7 +127,22 @@ export default function App() {
 
       <footer className="border-t border-slate-200 dark:border-slate-800/80 bg-[#F8FAFC] dark:bg-[#090D16] py-8 transition-colors">
         <div className="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-sm text-slate-500 dark:text-slate-400">
-          <p>Kenya Postal Code Directory · Open Lookup &amp; Free REST API</p>
+          <div className="flex items-center gap-3.5">
+            <img
+              src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
+              alt="Kenya Postal Codes logo"
+              referrerPolicy="no-referrer"
+              className="w-14 h-14 rounded-xl object-contain bg-white p-1 border border-slate-200 dark:border-slate-700 shrink-0"
+            />
+            <div>
+              <p className="font-semibold text-slate-900 dark:text-slate-100">
+                Kenya Postal Directory
+              </p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                Open Lookup &amp; Free REST API
+              </p>
+            </div>
+          </div>
           <div className="flex flex-wrap items-center gap-6">
             <a
               href="/postal-codes.csv"

@@ -292,8 +292,8 @@ export function LookupWorkspace({
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-end mb-8">
-            <div className="lg:col-span-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch mb-8">
+            <div className="lg:col-span-8 flex flex-col justify-center">
               <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900 dark:text-slate-50 text-balance leading-[1.1] mb-3.5">
                 Find any Kenyan postal code in milliseconds.
               </h1>
@@ -302,24 +302,35 @@ export function LookupWorkspace({
               </p>
             </div>
 
-            <div className="lg:col-span-4 grid grid-cols-3 gap-3 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-xl p-4">
-              <div>
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Offices</p>
-                <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
-                  {POSTAL_ENTRIES.length}
-                </p>
+            <div className="lg:col-span-4 bg-white dark:bg-[#111827] border border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden flex flex-col justify-between">
+              <div className="bg-white px-6 py-4 flex items-center justify-center border-b border-slate-100 dark:border-slate-800">
+                <img
+                  src="/assets/aistudio/be00bca6-2afe-493f-8f84-c956f0d49533_16fefaa7.png"
+                  alt="Kenya Postal Codes official directory logo"
+                  referrerPolicy="no-referrer"
+                  className="w-44 sm:w-48 h-auto object-contain"
+                />
               </div>
-              <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Regions</p>
-                <p className="mt-1 font-mono text-xl font-bold text-slate-900 dark:text-slate-50 tabular-nums">
-                  10
-                </p>
-              </div>
-              <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
-                <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Formats</p>
-                <p className="mt-1 font-mono text-sm font-bold text-[#EA580C] dark:text-[#FB923C] leading-7">
-                  JSON/CSV
-                </p>
+
+              <div className="grid grid-cols-3 gap-3 p-4">
+                <div>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Offices</p>
+                  <p className="mt-0.5 font-mono text-lg font-bold text-slate-900 dark:text-slate-50 tabular-nums">
+                    {POSTAL_ENTRIES.length}
+                  </p>
+                </div>
+                <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Regions</p>
+                  <p className="mt-0.5 font-mono text-lg font-bold text-slate-900 dark:text-slate-50 tabular-nums">
+                    10
+                  </p>
+                </div>
+                <div className="border-l border-slate-200 dark:border-slate-800 pl-3">
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400">Formats</p>
+                  <p className="mt-0.5 font-mono text-sm font-bold text-[#EA580C] dark:text-[#FB923C] leading-7">
+                    JSON/CSV
+                  </p>
+                </div>
               </div>
             </div>
           </div>
